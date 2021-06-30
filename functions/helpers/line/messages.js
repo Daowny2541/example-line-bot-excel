@@ -1068,99 +1068,166 @@ const meIncomeOther = ([,	,	,	,	,	,	,	accountName,	,	debit		]) => {
 }
 
 const msgTest = {
-  "type": "carousel",
-  "contents": [
-    {
-      "type": "bubble",
-      "body": {
+  "type": "bubble",
+  "size": "giga",
+  "direction": "ltr",
+  "header": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "กรุณาเลือกเดือนที่ต้องการดูข้อมูลย้อนหลัง",
+        "size": "md",
+        "style": "normal",
+        "weight": "bold",
+        "gravity": "center",
+        "position": "relative",
+        "align": "center",
+        "wrap": true,
+        "color": "#FFFFFF"
+      }
+    ],
+    "position": "relative"
+  },
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "spacing": "sm",
+    "contents": [
+      {
         "type": "box",
-        "layout": "vertical",
+        "layout": "horizontal",
+        "spacing": "xs",
         "contents": [
           {
-            "type": "text",
-            "text": "รายได้อื่น ๆ เพิ่มเติม",
-            "size": "md",
-            "weight": "bold",
-            "style": "normal",
-            "gravity": "center",
-            "align": "center",
+            "type": "button",
             "action": {
               "type": "message",
-              "label": "action",
-              "text": "รายละเอียดรายได้อื่น ๆ เพิ่มเติม"
-            }
+              "label": "เดือน:1",
+              "text": "เดือน:1"
+            },
+            "position": "relative",
+            "style": "primary"
+          },
+          {
+            "type": "button",
+            "action": {
+              "type": "message",
+              "label": "เดือน:2",
+              "text": "เดือน:2"
+            },
+            "style": "primary",
+            "position": "relative"
+          },
+          {
+            "type": "button",
+            "action": {
+              "type": "message",
+              "label": "เดือน:3",
+              "text": "เดือน:3"
+            },
+            "style": "primary",
+            "position": "relative"
+          }
+        ]
+      },
+      {
+        "type": "separator"
+      },
+      {
+        "type": "box",
+        "layout": "horizontal",
+        "spacing": "xs",
+        "contents": [
+          {
+            "type": "button",
+            "action": {
+              "type": "message",
+              "label": "เดือน:4",
+              "text": "เดือน:4"
+            },
+            "style": "primary",
+            "position": "relative"
+          },
+          {
+            "type": "button",
+            "action": {
+              "type": "message",
+              "label": "เดือน:5",
+              "text": "เดือน:5"
+            },
+            "style": "primary",
+            "position": "relative"
+          },
+          {
+            "type": "button",
+            "action": {
+              "type": "message",
+              "label": "เดือน:6",
+              "text": "เดือน:6"
+            },
+            "style": "primary",
+            "position": "relative"
           }
         ]
       }
-    },
-    {
-      "type": "bubble",
-      "body": {
-        "type": "box",
-        "layout": "vertical",
-        "contents": [
-          {
-            "type": "text",
-            "text": "รายการหักอื่น ๆ เพิ่มเติม",
-            "size": "md",
-            "weight": "bold",
-            "style": "normal",
-            "align": "center",
-            "gravity": "center",
-            "action": {
-              "type": "message",
-              "label": "action",
-              "text": "รายละเอียดรายการหักอื่น ๆ เพิ่มเติม"
-            }
-          }
-        ]
-      }
+    ],
+    "position": "relative"
+  },
+  "styles": {
+    "header": {
+      "backgroundColor": "#1DB954"
     }
-  ]
+  }
 }
 
 const text = (['text', 'text', 'text', 'text'])
-const salaryOtherDebit = {
-  type: "bubble",
-  size: "giga",
-  header: {
-      type: "box",
-      layout: "horizontal",
-      contents: [
-          {
-              type: "image",
-              url: "https://bcrm-i.line-scdn.net/bcrm/uploads/1557539795/public_asset/file/1039/16041313597470536_logo.png",
-              align: "start",
-              size: "xxs",
-              flex: 0,
-              aspectRatio: "4:3"
-          },
-          {
-              type: "text",
-              text: "Powered by Spotify",
-              color: "#ffffff",
-              size: "xxs",
-              align: "end",
-              gravity: "center",
-              position: "relative",
-              weight: "regular"
-          }
-      ],
-      paddingAll: "10px"
-  },
-  body: {
-      type: "box",
-      layout: "vertical",
-      contents: [],
-      backgroundColor: "#191414",
-      spacing: "md"
-  },
-  styles: {
-      header: {
-          backgroundColor: "#1DB954"
-      }
+const salaryOtherDebit = (data) => {
+
+  const msg = {
+    type: "bubble",
+    size: "giga",
+    header: {
+        type: "box",
+        layout: "horizontal",
+        contents: [
+            {
+                type: "image",
+                url: "https://bcrm-i.line-scdn.net/bcrm/uploads/1557539795/public_asset/file/1039/16041313597470536_logo.png",
+                align: "start",
+                size: "xxs",
+                flex: 0,
+                aspectRatio: "4:3"
+            },
+            {
+                type: "text",
+                text: data,
+                color: "#ffffff",
+                size: "xxs",
+                align: "end",
+                gravity: "center",
+                position: "relative",
+                weight: "regular"
+            }
+        ],
+        paddingAll: "10px"
+    },
+    body: {
+        type: "box",
+        layout: "vertical",
+        contents: [],
+        backgroundColor: "#191414",
+        spacing: "md"
+    },
+    styles: {
+        header: {
+            backgroundColor: "#1DB954"
+        }
+    }
+                  
   }
-                
+  return msg
 }
 
   module.exports = { salaryMessage, profileMessage, monthMessage, msgTest, salaryOtherDebit, meIncomeOther }

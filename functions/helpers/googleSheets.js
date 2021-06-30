@@ -19,12 +19,7 @@ const getGoogleSheetDataSalary = async (range) => {
   let data = []
     try {
       data = (await sheets.spreadsheets.values.get(params)).data
-      if(data.length) {
-        data.map((row) => {
-          console.log(`${row[0]}, ${row[9]}`);
-        })
-        console.log(data)
-      }
+      
       //console.log(data)
     } catch (err) {
       console.error(err.message)
@@ -48,6 +43,7 @@ const getGoogleSheetDataTest = async (range) => {
   let data = []
     try {
       data = (await sheets.spreadsheets.values.get(params)).data
+      
     } catch (err) {
       console.error(err.message)
     }

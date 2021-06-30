@@ -5,6 +5,7 @@ const { reply} = require('./helpers/line')
 const { salaryMessage, profileMessage, monthMessage, msgTest, salaryOtherDebit, meIncomeOther } = require('./helpers/line/messages')
 const { getGoogleSheetDataSalary, getGoogleSheetDataTest} = require('./helpers/googleSheets')
 const { validateRegistered, registerUser } = require('./helpers/firebase')
+const { compute_alpha } = require('googleapis')
 
 //https://ecbe60c2b938.ngrok.io/botslipexcel/us-central1/lineWebhook 
 
@@ -17,7 +18,7 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
       const messageFromUser = message.text.trim()
       const checkRegister = messageFromUser.split('ลงทะเบียน:')
       const needToRegister = checkRegister && checkRegister[1]
-      const checkSalary = messageFromUser.split('เดือน:')
+      const checkSalary = messageFromUser.split('เดือน')
       const monPay = checkSalary[1]
       const isRegister = await validateRegistered(lineUserID)
 
@@ -74,7 +75,22 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
             return replyMessage(req.body, res, 'ขอโทษค่ะ! เนื่องจากบริการนี้อยู่ในช่วงการพัฒนา')
 
           case `เช็คเงินเดือนย้อนหลัง`:
-          return replyMessage(req.body, res, 'กรุณาพิมพ์ เดือน:หมายเลขประจำเดือนนั้น เช่น เดือน:1')
+          return replyMessage(req.body, res, msgTest, 'flex')
+
+          case `เดือน:6`:
+            
+            if (isRegister) {
+              const {empCode}  = isRegister
+              //console.log(empCode + ',' + monPay)
+              const employees1 = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
+              const hasEmployee1 = employees1.values.filter(([empCodeMe]) => empCodeMe === empCode.toString())[0]
+
+              //console.log(empCode + ',' + monPay)
+              
+              return replyMessage(req.body, res,  monthMessage(hasEmployee1), 'flex')
+              //console.log(value1)
+            }
+            return replyMessage(req.body, res, 'ไม่พบข้อมูล กรุณาลงทะเบียนก่อนใช้งาน')
 
           case `เดือน:5`:
             
@@ -143,14 +159,39 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
             //console.log(empCode + ',' + monPay)
             const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
             const hasEmployee = employees.values.filter(([empCodeMe]) => empCodeMe === empCode.toString())[5]
+            const test = employees.values.filter(([empCodeMe]) => empCodeMe === empCode.toString())
 
-            //console.log(empCode + ',' + monPay)
+            console.log(test)
             
             return replyMessage(req.body, res,  monthMessage(hasEmployee), 'flex')
             //console.log(value1)
           }
           return replyMessage(req.body, res, 'ไม่พบข้อมูล กรุณาลงทะเบียนก่อนใช้งาน')
           
+          case `เดือน${monPay}`:
+          //   const members = [ 
+          //     {name: "Eve", age: 24}, 
+          //     {name: "Adam", age: 48}, 
+          //     {name: "Chris", age: 18}, 
+          //     {name: "Danny", age: 30}
+          //  ]
+            const employees1 = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
+            const employees2 = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_ROWI_SHEET1)
+
+            if (isRegister) {
+              const {empCode}  = isRegister
+              const result1 = employees1.values.filter(([empCodeMe]) => {
+                return empCodeMe == empCode.toString()
+              })
+              const result2 = employees2.values.filter(([month]) => {
+                return month == 6
+              })
+              console.log(result1)
+            }
+           
+           // [{name: "Adam", age: 48}, {name: "Danny", age: 30}]
+          return replyMessage(req.body, res, 'ไม่พบข้อมูล กรุณาลงทะเบียนก่อนใช้งาน')
+
         } 
         return replyMessage(req.body, res, 'ขอโทษค่ะ! ฉันยังไม่ฉลาดพอที่จะเข้าใจคุณ')
       }

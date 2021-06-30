@@ -9,7 +9,8 @@ const lineCredential = {
     RANGE_SHEET1: 'salary2021!A2:AJ',
     RANGE_SHEET3: `debit!A2:J`,
     RANGE_ROWH_SHEET3: `debit`,
-    RANGE_ROWI_SHEET3: `debit!I:I`
+    RANGE_ROWI_SHEET3: `debit!I:I`,
+    RANGE_ROWI_SHEET1: `salary2021!I2:AJ`
   }
 
   const googleSheet2Credential = {
