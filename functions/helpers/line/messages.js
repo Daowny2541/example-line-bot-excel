@@ -598,6 +598,16 @@ const monthMessage = ([empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	org
             align: "center"
           },
           {
+            type: "text",
+            contents: [],
+            size: "md",
+            weight: "regular",
+            gravity: "center",
+            text: `เดือน ${allMonth}`,
+            color: "#000000",
+            align: "center"
+          },
+          {
             type: "box",
             layout: "horizontal",
             spacing: "md",
@@ -1100,12 +1110,23 @@ const msgTest = {
         "layout": "horizontal",
         "spacing": "xs",
         "contents": [
+          
           {
             "type": "button",
             "action": {
               "type": "message",
-              "label": "เดือน:1",
-              "text": "เดือน:1"
+              "label": "ธ.ค.",
+              "text": "ธันวาคม"
+            },
+            "style": "primary",
+            "position": "relative"
+          },
+          {
+            "type": "button",
+            "action": {
+              "type": "message",
+              "label": "ม.ค.",
+              "text": "มกราคม"
             },
             "position": "relative",
             "style": "primary"
@@ -1114,26 +1135,13 @@ const msgTest = {
             "type": "button",
             "action": {
               "type": "message",
-              "label": "เดือน:2",
-              "text": "เดือน:2"
-            },
-            "style": "primary",
-            "position": "relative"
-          },
-          {
-            "type": "button",
-            "action": {
-              "type": "message",
-              "label": "เดือน:3",
-              "text": "เดือน:3"
+              "label": "ก.พ.",
+              "text": "กุมภาพันธ์"
             },
             "style": "primary",
             "position": "relative"
           }
         ]
-      },
-      {
-        "type": "separator"
       },
       {
         "type": "box",
@@ -1144,8 +1152,8 @@ const msgTest = {
             "type": "button",
             "action": {
               "type": "message",
-              "label": "เดือน:4",
-              "text": "เดือน:4"
+              "label": "มี.ค.",
+              "text": "มีนาคม"
             },
             "style": "primary",
             "position": "relative"
@@ -1154,8 +1162,8 @@ const msgTest = {
             "type": "button",
             "action": {
               "type": "message",
-              "label": "เดือน:5",
-              "text": "เดือน:5"
+              "label": "เม.ย.",
+              "text": "เมษายน"
             },
             "style": "primary",
             "position": "relative"
@@ -1164,8 +1172,8 @@ const msgTest = {
             "type": "button",
             "action": {
               "type": "message",
-              "label": "เดือน:6",
-              "text": "เดือน:6"
+              "label": "พ.ค.",
+              "text": "พฤษภาคม"
             },
             "style": "primary",
             "position": "relative"

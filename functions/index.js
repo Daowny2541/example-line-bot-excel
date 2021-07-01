@@ -77,22 +77,7 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
           case `เช็คเงินเดือนย้อนหลัง`:
           return replyMessage(req.body, res, msgTest, 'flex')
 
-          case `เดือน:6`:
-            
-            if (isRegister) {
-              const {empCode}  = isRegister
-              //console.log(empCode + ',' + monPay)
-              const employees1 = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
-              const hasEmployee1 = employees1.values.filter(([empCodeMe]) => empCodeMe === empCode.toString())[0]
-
-              //console.log(empCode + ',' + monPay)
-              
-              return replyMessage(req.body, res,  monthMessage(hasEmployee1), 'flex')
-              //console.log(value1)
-            }
-            return replyMessage(req.body, res, 'ไม่พบข้อมูล กรุณาลงทะเบียนก่อนใช้งาน')
-
-          case `เดือน:5`:
+          case `พฤษภาคม`:
             
             if (isRegister) {
               const {empCode}  = isRegister
@@ -107,7 +92,7 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
             }
             return replyMessage(req.body, res, 'ไม่พบข้อมูล กรุณาลงทะเบียนก่อนใช้งาน')
 
-          case `เดือน:4`:
+          case `เมษายน`:
           
           if (isRegister) {
             const {empCode}  = isRegister
@@ -122,7 +107,7 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
           }
           return replyMessage(req.body, res, 'ไม่พบข้อมูล กรุณาลงทะเบียนก่อนใช้งาน')
 
-          case `เดือน:3`:
+          case `มีนาคม`:
           
           if (isRegister) {
             const {empCode}  = isRegister
@@ -137,7 +122,7 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
           }
           return replyMessage(req.body, res, 'ไม่พบข้อมูล กรุณาลงทะเบียนก่อนใช้งาน')
 
-          case `เดือน:2`:
+          case `กุมภาพันธ์`:
           
           if (isRegister) {
             const {empCode}  = isRegister
@@ -152,13 +137,29 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
           }
           return replyMessage(req.body, res, 'ไม่พบข้อมูล กรุณาลงทะเบียนก่อนใช้งาน')
 
-          case `เดือน:1`:
+          case `มกราคม`:
           
           if (isRegister) {
             const {empCode}  = isRegister
             //console.log(empCode + ',' + monPay)
             const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
             const hasEmployee = employees.values.filter(([empCodeMe]) => empCodeMe === empCode.toString())[5]
+            const test = employees.values.filter(([empCodeMe]) => empCodeMe === empCode.toString())
+
+            console.log(test)
+            
+            return replyMessage(req.body, res,  monthMessage(hasEmployee), 'flex')
+            //console.log(value1)
+          }
+          return replyMessage(req.body, res, 'ไม่พบข้อมูล กรุณาลงทะเบียนก่อนใช้งาน')
+
+          case `ธันวาคม`:
+          
+          if (isRegister) {
+            const {empCode}  = isRegister
+            //console.log(empCode + ',' + monPay)
+            const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
+            const hasEmployee = employees.values.filter(([empCodeMe]) => empCodeMe === empCode.toString())[6]
             const test = employees.values.filter(([empCodeMe]) => empCodeMe === empCode.toString())
 
             console.log(test)
