@@ -478,6 +478,143 @@ const salaryMessage = ([empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	or
     }
 }
 
+const msgDetailForRegister = {
+  "type": "bubble",
+  "size": "giga",
+  "direction": "ltr",
+  "header": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "ท่านกำลังลงทะเบียนระบบ Pay Slip",
+        "color": "#FFFFFF",
+        "style": "normal",
+        "weight": "bold",
+        "align": "center",
+        "gravity": "center",
+        "size": "md"
+      },
+      {
+        "type": "text",
+        "text": "โดยมีข้อกำหนดสำคัญควรทราบดังนี้",
+        "color": "#FFFFFF",
+        "weight": "bold",
+        "style": "normal",
+        "gravity": "center",
+        "align": "center",
+        "size": "md",
+        "offsetTop": "sm"
+      }
+    ],
+    "spacing": "sm",
+    "margin": "sm",
+    "position": "relative"
+  },
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "1. การลงทะเบียนของพนักงาน 1 คน",
+        "size": "sm",
+        "weight": "regular",
+        "style": "normal",
+        "offsetTop": "sm"
+      },
+      {
+        "type": "text",
+        "text": "จะได้เพียง 1 ID",
+        "size": "sm",
+        "weight": "regular",
+        "style": "normal"
+      },
+      {
+        "type": "text",
+        "text": "2. ห้ามเอา ID ของผู้อื่น หรือที่ไม่แน่ใจมาใช้งาน",
+        "size": "sm",
+        "weight": "regular",
+        "style": "normal",
+        "offsetTop": "sm"
+      },
+      {
+        "type": "text",
+        "text": "ลงทะเบียนโดยเด็จขาด",
+        "size": "sm",
+        "weight": "regular",
+        "style": "normal"
+      },
+      {
+        "type": "text",
+        "text": "3. การแอบลงดูเงินเดือนของบุคคลอื่น ",
+        "size": "sm",
+        "weight": "regular",
+        "style": "normal",
+        "offsetTop": "sm"
+      },
+      {
+        "type": "text",
+        "text": "ถือเป็นความผิดร้ายแรงของบริษัท",
+        "size": "sm",
+        "weight": "regular",
+        "style": "normal"
+      },
+      {
+        "type": "separator",
+        "color": "#C4C4C4",
+        "margin": "lg"
+      }
+    ],
+    "spacing": "sm",
+    "margin": "sm",
+    "position": "relative"
+  },
+  "footer": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "วิธีการลงทะเบียน",
+        "size": "md",
+        "weight": "bold",
+        "style": "normal",
+        "offsetStart": "sm"
+      },
+      {
+        "type": "text",
+        "text": "ให้พิมพ์คำว่า ลงทะเบียน:ตามด้วยรหัสพนักงาน",
+        "size": "sm",
+        "weight": "regular",
+        "style": "normal",
+        "offsetStart": "lg",
+        "offsetTop": "sm"
+      },
+      {
+        "type": "text",
+        "text": "ของตัวเองโดยไม่มีเว้นวรรค เช่น  ลงทะเบียน:999999",
+        "offsetStart": "lg",
+        "size": "sm",
+        "weight": "regular",
+        "style": "normal",
+        "offsetTop": "sm"
+      }
+    ],
+    "margin": "sm",
+    "spacing": "sm",
+    "position": "relative"
+  },
+  "styles": {
+    "header": {
+      "backgroundColor": "#1DB954",
+      "separator": true,
+      "separatorColor": "#C4C4C4"
+    }
+  }
+}
+
 const profileMessage = ([empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	orgNameEng,	isSpecialPeriod,	monThis,	monPay,	title,	firstName,	lastName,	idCard,	birthDate,	workStartDate,	allMonth,	namePay,	periodYear,	periodno,	payDate,	salary,	netIncome,	totalIncome,	totalDeduct,	social,	providentFund,	empPaytax,	otherIncome,	otherDeduct,	emplGrupCode,	branchNo,	providentFundEmployer,	tax401,	positionName,	bookNo,	bankName]) => {
   //empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	orgNameEng,	isSpecialPeriod,	monThis,	monPay,	title,	firstName,	lastName,	idCard,	birthDate,	workStartDate,	allMonth,	namePay,	periodYear,	periodno,	payDate,	salary,	netIncome,	totalIncome,	totalDeduct,	social,	providentFund,	empPaytax,	otherIncome,	otherDeduct,	emplGrupCode,	branchNo,	providentFundEmployer,	tax401,	positionName,	bookNo,	bankName		
   return {
@@ -1238,4 +1375,4 @@ const salaryOtherDebit = (data) => {
   return msg
 }
 
-  module.exports = { salaryMessage, profileMessage, monthMessage, msgTest, salaryOtherDebit, meIncomeOther }
+  module.exports = { salaryMessage, profileMessage, monthMessage, msgTest, msgDetailForRegister}

@@ -2,7 +2,7 @@ const functions = require('firebase-functions')
 
 const { googleSheetCredential} = require('./config')
 const { reply} = require('./helpers/line')
-const { salaryMessage, profileMessage, monthMessage, msgTest, salaryOtherDebit, meIncomeOther } = require('./helpers/line/messages')
+const { salaryMessage, profileMessage, monthMessage, msgTest, msgDetailForRegister} = require('./helpers/line/messages')
 const { getGoogleSheetDataSalary, getGoogleSheetDataTest} = require('./helpers/googleSheets')
 const { validateRegistered, registerUser } = require('./helpers/firebase')
 const { compute_alpha } = require('googleapis')
@@ -55,7 +55,7 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
                 return replyMessage(req.body, res, profileMessage(profileMe), 'flex')
               }
               
-            return replyMessage(req.body, res, 'กรุณาพิมพ์ ลงทะเบียน:รหัสพนักงาน เช่น ลงทะเบียน:123456')
+            return replyMessage(req.body, res, msgDetailForRegister, 'flex')
 
           case 'เช็คเงินเดือนล่าสุด':
 
@@ -194,9 +194,8 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
           return replyMessage(req.body, res, 'ไม่พบข้อมูล กรุณาลงทะเบียนก่อนใช้งาน')
 
         } 
-        return replyMessage(req.body, res, 'ขอโทษค่ะ! ฉันยังไม่ฉลาดพอที่จะเข้าใจคุณ')
+        return replyMessage(req.body, res, 'ขอโทษครับ/ค่ะ  รายละเอียดที่ใส่ไม่ตรงตามที่กำหนดเงื่อนไข')
       }
-      //return replyMessage(req.body, res, 'ขอโทษ! เนื้องจากบริการนี้อยู่ในช่วงการพัฒนา')
     }
 
     res.status(200).send('ok')
