@@ -4,9 +4,6 @@ const { googleSheetCredential} = require('../../config')
 const numberToStringCurrency = (amount) => {
     return Intl.NumberFormat().format(amount)
 }
-//[,idCard, namePay, salary = 0.0, social = 0.0]
-//empCode	idCard	title	firstName	lastName	birthDate	positionName	workStartDate	allMonth	namePay	periodYear	periodno	monThis	monPay	payDate	isSpecialPeriod	incomeDeductCode	accountName	accountCode	accountNameO	debit	credit	salary	netIncomet	totalIncome	totalDeduct	social	providentFund	empPaytax	otherIncome	otherDeducte	emplGrupCode	branchNo	bookNo	bankName		
-
 const salaryMessage = ([empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	orgNameEng,	isSpecialPeriod,	monThis,	monPay,	title,	firstName,	lastName,	idCard,	birthDate,	workStartDate,	allMonth,	namePay,	periodYear,	periodno,	payDate,	salary,	netIncome,	totalIncome,	totalDeduct,	social,	providentFund,	empPaytax,	otherIncome,	otherDeduct,	emplGrupCode,	branchNo,	providentFundEmployer,	tax401,	positionName,	bookNo,	bankName]) => {
   //console.log(monPay)
   return {
@@ -454,27 +451,7 @@ const salaryMessage = ([empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	or
             layout: "vertical"
            }
          ]
-       },
-      footer: {
-        contents: [
-          {
-            action: {
-              text: "เช็คเงินเดือนย้อนหลัง",
-              type: "message",
-              label: "ขอดูเงินเดือนย้อนหลัง"
-            },
-            margin: "xs",
-            gravity: "center",
-            style: "primary",
-            type: "button",
-            height: "sm"
-          }
-        ],
-        layout: "vertical",
-        margin: "md",
-        type: "box",
-        spacing: "md"
-      }
+       }
     }
 }
 

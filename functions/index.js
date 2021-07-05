@@ -1,7 +1,7 @@
 const functions = require('firebase-functions')
 
 const { googleSheetCredential} = require('./config')
-const { reply} = require('./helpers/line')
+const { reply, linkRichMenu} = require('./helpers/line')
 const { salaryMessage, profileMessage, monthMessage, msgTest, msgDetailForRegister} = require('./helpers/line/messages')
 const { getGoogleSheetDataSalary, getGoogleSheetDataTest} = require('./helpers/googleSheets')
 const { validateRegistered, registerUser } = require('./helpers/firebase')
@@ -14,6 +14,8 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
     const { type, message, source: { userId: lineUserID } } = req.body.events[0]
     const isTextMessage = type === 'message' && message.type === 'text'
 
+    console.log("User id: " + req.body.events[0].source.userId)
+
     if (isTextMessage) {
       const messageFromUser = message.text.trim()
       const checkRegister = messageFromUser.split('ลงทะเบียน:')
@@ -21,46 +23,38 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
       const checkSalary = messageFromUser.split('เดือน')
       const monPay = checkSalary[1]
       const isRegister = await validateRegistered(lineUserID)
+      const richMenuId1 = 'richmenu-b7aeee763491cb7e6f41d1cd87508ac2'
+      const richMenuId2 = 'richmenu-2a8420170ee5e7d623089a9987f0fc97'
 
       if (needToRegister) {
         const empCodeForRegister = checkRegister[1]
         const hasBeenRegistered = await validateRegistered(lineUserID)
 
-        if (hasBeenRegistered) {
-          return replyMessage(req.body, res, 'ไม่สามารถลงทะเบียนซ้ำได้')
-        }
+          if (hasBeenRegistered) {
+            return replyMessage(req.body, res, 'ไม่สามารถลงทะเบียนซ้ำได้')
+          }
 
-        const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
-        const hasEmployee = employees.values.some(([employeeEmpCode]) => employeeEmpCode === empCodeForRegister.toString())
+          const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
+          const hasEmployee = employees.values.some(([employeeEmpCode]) => employeeEmpCode === empCodeForRegister.toString())
 
-        if (!hasEmployee) {
-          return replyMessage(req.body, res, 'รหัสพนักงานไม่ตรงกับที่มีในระบบ')
-        }
+          if (!hasEmployee) {
+            return replyMessage(req.body, res, 'รหัสพนักงานไม่ตรงกับที่มีในระบบ')
+          }
 
         registerUser(lineUserID, empCodeForRegister)
-        return replyMessage(req.body, res, 'ลงทะเบียนเรียบร้อย')
+        replyMessage(req.body, res, 'ลงทะเบียนเรียบร้อย')
+        return linkRichMenu(req.body.events[0].source.userId, richMenuId2)
       } 
       else 
       {
         switch (messageFromUser) {
           case 'ลงทะเบียน':
-              if (isRegister) {
-                // return replyMessage(req.body, res, 'คุณได้ทำการลงทะเบียนไว้แล้ว')
-                const { empCode } = isRegister
-                const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
-                const profileMe = employees.values.filter(([employeeIDCard]) => employeeIDCard === empCode.toString())[0]
-
-                console.log(profileMe)
-
-                return replyMessage(req.body, res, profileMessage(profileMe), 'flex')
-              }
-              
             return replyMessage(req.body, res, msgDetailForRegister, 'flex')
 
           case 'เช็คเงินเดือนล่าสุด':
 
             if (!isRegister) {
-              return replyMessage(req.body, res, 'กรุณาลงทะเบียนก่อนใช้งาน')
+              return linkRichMenu(req.body.events[0].source.userId, richMenuId1)
             }
             const { empCode } = isRegister
             const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
