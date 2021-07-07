@@ -1,11 +1,12 @@
 const functions = require('firebase-functions')
 
-const { googleSheetCredential} = require('./config')
+const { googleSheetCredential, lineCredential} = require('./config')
 const { reply, linkRichMenu} = require('./helpers/line')
 const { salaryMessage, profileMessage, monthMessage, msgTest, msgDetailForRegister} = require('./helpers/line/messages')
 const { getGoogleSheetDataSalary, getGoogleSheetDataTest} = require('./helpers/googleSheets')
 const { validateRegistered, registerUser } = require('./helpers/firebase')
 const { compute_alpha } = require('googleapis')
+const line = require('@line/bot-sdk')
 
 //https://ecbe60c2b938.ngrok.io/botslipexcel/us-central1/lineWebhook 
 
@@ -13,6 +14,9 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
   try {
     const { type, message, source: { userId: lineUserID } } = req.body.events[0]
     const isTextMessage = type === 'message' && message.type === 'text'
+    const client = new line.Client({
+      channelAccessToken: `${lineCredential.ACCESS_TOKEN}`
+    });
 
     console.log("User id: " + req.body.events[0].source.userId)
 
@@ -41,7 +45,15 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
             return replyMessage(req.body, res, 'รหัสพนักงานไม่ตรงกับที่มีในระบบ')
           }
 
-        registerUser(lineUserID, empCodeForRegister)
+        client.getProfile(lineUserID).then((profile) => {
+          console.log(profile.displayName);
+          console.log(profile.statusMessage);
+          registerUser(profile.userId, empCodeForRegister, profile.displayName)
+        })
+        .catch((err) => {
+          // error handling
+        });
+        
         replyMessage(req.body, res, 'ลงทะเบียนเรียบร้อย')
         return linkRichMenu(req.body.events[0].source.userId, richMenuId2)
       } 
@@ -84,7 +96,7 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
               return replyMessage(req.body, res,  monthMessage(hasEmployee1), 'flex')
               //console.log(value1)
             }
-            return replyMessage(req.body, res, 'ไม่พบข้อมูล กรุณาลงทะเบียนก่อนใช้งาน')
+            return linkRichMenu(req.body.events[0].source.userId, richMenuId1)
 
           case `เมษายน`:
           
@@ -99,7 +111,7 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
             return replyMessage(req.body, res,  monthMessage(hasEmployee), 'flex')
             //console.log(value1)
           }
-          return replyMessage(req.body, res, 'ไม่พบข้อมูล กรุณาลงทะเบียนก่อนใช้งาน')
+          return linkRichMenu(req.body.events[0].source.userId, richMenuId1)
 
           case `มีนาคม`:
           
@@ -114,7 +126,7 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
             return replyMessage(req.body, res,  monthMessage(hasEmployee), 'flex')
             //console.log(value1)
           }
-          return replyMessage(req.body, res, 'ไม่พบข้อมูล กรุณาลงทะเบียนก่อนใช้งาน')
+          return linkRichMenu(req.body.events[0].source.userId, richMenuId1)
 
           case `กุมภาพันธ์`:
           
@@ -129,7 +141,7 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
             return replyMessage(req.body, res,  monthMessage(hasEmployee), 'flex')
             //console.log(value1)
           }
-          return replyMessage(req.body, res, 'ไม่พบข้อมูล กรุณาลงทะเบียนก่อนใช้งาน')
+          return linkRichMenu(req.body.events[0].source.userId, richMenuId1)
 
           case `มกราคม`:
           
@@ -145,7 +157,7 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
             return replyMessage(req.body, res,  monthMessage(hasEmployee), 'flex')
             //console.log(value1)
           }
-          return replyMessage(req.body, res, 'ไม่พบข้อมูล กรุณาลงทะเบียนก่อนใช้งาน')
+          return linkRichMenu(req.body.events[0].source.userId, richMenuId1)
 
           case `ธันวาคม`:
           
@@ -161,7 +173,7 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
             return replyMessage(req.body, res,  monthMessage(hasEmployee), 'flex')
             //console.log(value1)
           }
-          return replyMessage(req.body, res, 'ไม่พบข้อมูล กรุณาลงทะเบียนก่อนใช้งาน')
+          return linkRichMenu(req.body.events[0].source.userId, richMenuId1)
           
           case `เดือน${monPay}`:
           //   const members = [ 

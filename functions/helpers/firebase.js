@@ -18,10 +18,10 @@ ref.once('value')
   })
 }
 
-const registerUser = async (lineUserID,empCode) => {
+const registerUser = async (lineUserID,empCode,displayName) => {
   return new Promise((resolve, reject) => {
     const ref = db.ref(`/users/${lineUserID}`)
-ref.transaction(() => ({ empCode }))
+ref.transaction(() => ({ empCode, displayName }))
       .then((data) => resolve(data))
       .catch((error) => reject(error))
   })
