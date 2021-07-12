@@ -518,14 +518,14 @@ const msgDetailForRegister = {
       },
       {
         "type": "text",
-        "text": "ลงทะเบียนโดยเด็จขาด",
+        "text": "ลงทะเบียนโดยเด็ดขาด",
         "size": "sm",
         "weight": "regular",
         "style": "normal"
       },
       {
         "type": "text",
-        "text": "3. การแอบลงดูเงินเดือนของบุคคลอื่น ",
+        "text": "3. การแอบดูเงินเดือนของบุคคลอื่น",
         "size": "sm",
         "weight": "regular",
         "style": "normal",
@@ -1139,7 +1139,7 @@ const monthMessage = ([empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	org
 
 const meIncomeOther = ([,	,	,	,	,	,	,	accountName,	,	debit		]) => {
     //empCode,	namePrefix,	firstName,	lastName,	monPay,	payDate,	accountCode,	accountName,	isSpecialPeriod,	debit	
-    //console.log(accountName)
+    console.log(accountName)
   return {
     type: "bubble",
     body: {
@@ -1172,7 +1172,7 @@ const meIncomeOther = ([,	,	,	,	,	,	,	accountName,	,	debit		]) => {
                   text: `${accountName}`,
                   size: "md",
                   color: "#777777",
-                  flex: 0
+                  wrap: true
                 },
                 {
                   type: "text",
@@ -1352,4 +1352,81 @@ const salaryOtherDebit = (data) => {
   return msg
 }
 
-  module.exports = { salaryMessage, profileMessage, monthMessage, msgTest, msgDetailForRegister}
+  module.exports = { salaryMessage, meIncomeOther, monthMessage, msgTest, msgDetailForRegister}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+/* return {
+  type: "bubble",
+  body: {
+    type: "box",
+    layout: "vertical",
+    contents: [
+      {
+        type: "text",
+        text: "รายละเอียดรายได้อื่น ๆ",
+        weight: "bold",
+        size: "xl",
+        margin: "md"
+      },
+      {
+        type: "separator",
+        margin: "xxl"
+      },
+      {
+        type: "box",
+        layout: "vertical",
+        margin: "xxl",
+        spacing: "sm",
+        contents: [
+          {
+            type: "box",
+            layout: "horizontal",
+            contents: [
+              {
+                type: "text",
+                text: `${accountName}`,
+                size: "md",
+                color: "#777777",
+                flex: 0
+              },
+              {
+                type: "text",
+                text: `${numberToStringCurrency(debit)} บาท`,
+                size: "md",
+                color: "#777777",
+                align: "end"
+              },
+            ]
+          }
+        ]
+      }
+    ]
+  }
+} */
+
+
+/* var data = {}
+var userData = []
+
+ for (var _i = 0; _i < hasEmployee.length; _i++) {
+     var dataRow = hasEmployee[_i]
+     var record = {}
+     var super_array = [];
+     record['empCode'] = dataRow[0]
+     record['namePrefix'] = dataRow[1]
+     record['firstName'] = dataRow[2]
+     record['lastName'] = dataRow[3]
+     record['monPay'] = dataRow[4]
+     record['payDate'] = dataRow[5]
+     record['accountName'] = dataRow[7]
+     record['debit'] = dataRow[9]
+     userData.push(record)
+       // for (var j = 0; j < userData.push(record).length; j++) {
+       //   var subRecord = userData.push(record)
+       // }
+   }
+
+   data.user = userData
+   //var result = JSON.stringify(data)
+   console.log(data) */

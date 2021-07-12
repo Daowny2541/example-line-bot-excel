@@ -8,7 +8,7 @@ const lineCredential = {
     SPREADSHEET_ID: '1h7YLzMGX8_RJFEn4nlN6bwkHGC7eGY8wp-l1DlnS5sA', 
     RANGE_SHEET1: 'salary2021!A2:AJ',
     RANGE_SHEET3: `debit!A2:J`,
-    RANGE_ROWH_SHEET3: `debit`,
+    RANGE_ROWH_SHEET3: `debit!H:H`,
     RANGE_ROWI_SHEET3: `debit!I:I`,
     RANGE_ROWI_SHEET1: `salary2021!I2:AJ`
   }
