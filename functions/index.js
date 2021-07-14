@@ -2,7 +2,7 @@ const functions = require('firebase-functions')
 
 const { googleSheetCredential, lineCredential} = require('./config')
 const { reply, linkRichMenu} = require('./helpers/line')
-const { salaryMessage, profileMessage, monthMessage, msgTest, msgDetailForRegister} = require('./helpers/line/messages')
+const { salaryMessage, meIncomeOther, monthMessage, msgTest, msgDetailForRegister} = require('./helpers/line/messages')
 const { getGoogleSheetDataSalary, getGoogleSheetDataTest} = require('./helpers/googleSheets')
 const { validateRegistered, registerUser } = require('./helpers/firebase')
 const { compute_alpha } = require('googleapis')
@@ -90,11 +90,8 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
               //console.log(empCode + ',' + monPay)
               const employees1 = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
               const hasEmployee1 = employees1.values.filter(([empCodeMe]) => empCodeMe === empCode.toString())[1]
-
-              //console.log(empCode + ',' + monPay)
               
               return replyMessage(req.body, res,  monthMessage(hasEmployee1), 'flex')
-              //console.log(value1)
             }
             return linkRichMenu(req.body.events[0].source.userId, richMenuId1)
 
@@ -105,11 +102,8 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
             //console.log(empCode + ',' + monPay)
             const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
             const hasEmployee = employees.values.filter(([empCodeMe]) => empCodeMe === empCode.toString())[2]
-
-            //console.log(empCode + ',' + monPay)
             
             return replyMessage(req.body, res,  monthMessage(hasEmployee), 'flex')
-            //console.log(value1)
           }
           return linkRichMenu(req.body.events[0].source.userId, richMenuId1)
 
@@ -120,11 +114,8 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
             //console.log(empCode + ',' + monPay)
             const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
             const hasEmployee = employees.values.filter(([empCodeMe]) => empCodeMe === empCode.toString())[3]
-
-            //console.log(empCode + ',' + monPay)
             
             return replyMessage(req.body, res,  monthMessage(hasEmployee), 'flex')
-            //console.log(value1)
           }
           return linkRichMenu(req.body.events[0].source.userId, richMenuId1)
 
@@ -135,11 +126,8 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
             //console.log(empCode + ',' + monPay)
             const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
             const hasEmployee = employees.values.filter(([empCodeMe]) => empCodeMe === empCode.toString())[4]
-
-            //console.log(empCode + ',' + monPay)
             
             return replyMessage(req.body, res,  monthMessage(hasEmployee), 'flex')
-            //console.log(value1)
           }
           return linkRichMenu(req.body.events[0].source.userId, richMenuId1)
 
@@ -150,9 +138,6 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
             //console.log(empCode + ',' + monPay)
             const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
             const hasEmployee = employees.values.filter(([empCodeMe]) => empCodeMe === empCode.toString())[5]
-            const test = employees.values.filter(([empCodeMe]) => empCodeMe === empCode.toString())
-
-            console.log(test)
             
             return replyMessage(req.body, res,  monthMessage(hasEmployee), 'flex')
             //console.log(value1)
@@ -166,9 +151,6 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
             //console.log(empCode + ',' + monPay)
             const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
             const hasEmployee = employees.values.filter(([empCodeMe]) => empCodeMe === empCode.toString())[6]
-            const test = employees.values.filter(([empCodeMe]) => empCodeMe === empCode.toString())
-
-            console.log(test)
             
             return replyMessage(req.body, res,  monthMessage(hasEmployee), 'flex')
             //console.log(value1)
@@ -176,27 +158,29 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
           return linkRichMenu(req.body.events[0].source.userId, richMenuId1)
           
           case `เดือน${monPay}`:
-          //   const members = [ 
-          //     {name: "Eve", age: 24}, 
-          //     {name: "Adam", age: 48}, 
-          //     {name: "Chris", age: 18}, 
-          //     {name: "Danny", age: 30}
-          //  ]
-            const employees1 = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
-            const employees2 = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_ROWI_SHEET1)
+            //var numbers = [1, 2, 3];
+            const employees1 = await getGoogleSheetDataTest(googleSheetCredential.RANGE_SHEET3)
+            const hasEmployee = employees1.values.filter(([empCodeMe]) => empCodeMe === "107333")
+            const rowH = await getGoogleSheetDataTest(googleSheetCredential.RANGE_ROWH_SHEET3)
+            const rowI = await getGoogleSheetDataTest(googleSheetCredential.RANGE_ROWI_SHEET3)
 
-            if (isRegister) {
-              const {empCode}  = isRegister
-              const result1 = employees1.values.filter(([empCodeMe]) => {
-                return empCodeMe == empCode.toString()
-              })
-              const result2 = employees2.values.filter(([month]) => {
-                return month == 6
-              })
-              console.log(result1)
+            //console.log(JSON.stringify(hasEmployee))
+            var data = {}
+            var userData = []
+            for (var _i = 0; _i < hasEmployee.length; _i++) {
+              var num = hasEmployee[_i]
+              var record = {}
+              record['monPay'] = num[4]
+              if (num[_i][4] === monPay.toString()) {
+                _i = _i+2
+                userData.push(record)
+              }
+                console.log(num)
             }
-           
-           // [{name: "Adam", age: 48}, {name: "Danny", age: 30}]
+            data.user = userData
+            //var result = JSON.stringify(data)
+            console.log(data)
+
           return replyMessage(req.body, res, 'ไม่พบข้อมูล กรุณาลงทะเบียนก่อนใช้งาน')
 
         } 
