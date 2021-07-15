@@ -4,13 +4,13 @@ const { googleSheetCredential, lineCredential} = require('./config')
 const { reply, linkRichMenu} = require('./helpers/line')
 const { salaryMessage, meIncomeOther, monthMessage, msgTest, msgDetailForRegister} = require('./helpers/line/messages')
 const { getGoogleSheetDataSalary, getGoogleSheetDataTest} = require('./helpers/googleSheets')
-const { validateRegistered, registerUser } = require('./helpers/firebase')
+const { validateRegistered, registerUserUpdate, registerUser } = require('./helpers/firebase')
 const { compute_alpha } = require('googleapis')
 const line = require('@line/bot-sdk')
 
 //https://ecbe60c2b938.ngrok.io/botslipexcel/us-central1/lineWebhook 
 
-exports.lineWebhook = functions.https.onRequest(async (req, res) => {
+exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).https.onRequest(async (req, res) => {
   try {
     const { type, message, source: { userId: lineUserID } } = req.body.events[0]
     const isTextMessage = type === 'message' && message.type === 'text'
@@ -18,44 +18,60 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
       channelAccessToken: `${lineCredential.ACCESS_TOKEN}`
     });
 
-    console.log("User id: " + req.body.events[0].source.userId)
-
     if (isTextMessage) {
       const messageFromUser = message.text.trim()
-      const checkRegister = messageFromUser.split('ลงทะเบียน:')
+      const checkRegister = messageFromUser.split('รหัสพนักงาน:')
+      const checkIdCardRegister = messageFromUser.split('รหัสบัตรประชาชน:')
       const needToRegister = checkRegister && checkRegister[1]
+      const needRegisterFromIdCard = checkIdCardRegister && checkIdCardRegister[1]
       const checkSalary = messageFromUser.split('เดือน')
       const monPay = checkSalary[1]
       const isRegister = await validateRegistered(lineUserID)
       const richMenuId1 = 'richmenu-b7aeee763491cb7e6f41d1cd87508ac2'
       const richMenuId2 = 'richmenu-2a8420170ee5e7d623089a9987f0fc97'
 
-      if (needToRegister) {
-        const empCodeForRegister = checkRegister[1]
-        const hasBeenRegistered = await validateRegistered(lineUserID)
+      if (needRegisterFromIdCard) {
+        const idCard = checkIdCardRegister[1]
 
+        const hasBeenRegistered = await validateRegistered(lineUserID)
           if (hasBeenRegistered) {
             return replyMessage(req.body, res, 'ไม่สามารถลงทะเบียนซ้ำได้')
           }
 
-          const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
-          const hasEmployee = employees.values.some(([employeeEmpCode]) => employeeEmpCode === empCodeForRegister.toString())
+        const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
+        const hasEmployeeIdCard = employees.values.some(([employeeIdCard]) => employeeIdCard === idCard.toString())
 
-          if (!hasEmployee) {
+          if (!hasEmployeeIdCard) {
             return replyMessage(req.body, res, 'รหัสพนักงานไม่ตรงกับที่มีในระบบ')
           }
 
-        client.getProfile(lineUserID).then((profile) => {
-          console.log(profile.displayName);
-          console.log(profile.statusMessage);
-          registerUser(profile.userId, empCodeForRegister, profile.displayName)
-        })
-        .catch((err) => {
-          // error handling
-        });
+          registerUser(lineUserID, idCard)
+        return replyMessage(req.body, res, 'ลงทะเบียนด้วยรหัสพนักงาน พิมพ์ รหัสพนักงาน:1234')
+      } else
+      if (needToRegister) {
+        const empCodeForRegister = checkRegister[1] 
         
-        replyMessage(req.body, res, 'ลงทะเบียนเรียบร้อย')
-        return linkRichMenu(req.body.events[0].source.userId, richMenuId2)
+        const hasBeenRegistered = await validateRegistered(lineUserID)
+          if (hasBeenRegistered) {
+            const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
+              const hasEmployee = employees.values.some(([,employeeEmpCode]) => employeeEmpCode === empCodeForRegister.toString())
+
+              if (!hasEmployee) {
+                return replyMessage(req.body, res, 'รหัสพนักงานไม่ตรงกับที่มีในระบบ')
+              }
+
+            client.getProfile(lineUserID).then((profile) => {
+              registerUserUpdate(profile.userId, empCodeForRegister, profile.displayName)
+            })
+            .catch((err) => {
+              // error handling
+            });
+          
+            replyMessage(req.body, res, 'ลงทะเบียนเรียบร้อย')
+            return linkRichMenu(req.body.events[0].source.userId, richMenuId2)
+          }
+
+          return replyMessage(req.body, res, 'ไม่สามารถลงทะเบียนซ้ำได้')
       } 
       else 
       {
@@ -64,14 +80,12 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
             return replyMessage(req.body, res, msgDetailForRegister, 'flex')
 
           case 'เช็คเงินเดือนล่าสุด':
-
             if (!isRegister) {
               return linkRichMenu(req.body.events[0].source.userId, richMenuId1)
             }
             const { empCode } = isRegister
             const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
-            const me = employees.values.filter(([employeeIDCard]) => employeeIDCard === empCode.toString())[0]
-            //console.log(me)
+            const me = employees.values.filter(([,employeeIDCard]) => employeeIDCard === empCode.toString())[0]
             return replyMessage(req.body, res, salaryMessage(me), 'flex')
 
           case 'รายได้อื่น ๆ เพิ่มเติม':
@@ -87,9 +101,8 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
             
             if (isRegister) {
               const {empCode}  = isRegister
-              //console.log(empCode + ',' + monPay)
               const employees1 = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
-              const hasEmployee1 = employees1.values.filter(([empCodeMe]) => empCodeMe === empCode.toString())[1]
+              const hasEmployee1 = employees1.values.filter(([,empCodeMe]) => empCodeMe === empCode.toString())[1]
               
               return replyMessage(req.body, res,  monthMessage(hasEmployee1), 'flex')
             }
@@ -99,9 +112,8 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
           
           if (isRegister) {
             const {empCode}  = isRegister
-            //console.log(empCode + ',' + monPay)
             const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
-            const hasEmployee = employees.values.filter(([empCodeMe]) => empCodeMe === empCode.toString())[2]
+            const hasEmployee = employees.values.filter(([,empCodeMe]) => empCodeMe === empCode.toString())[2]
             
             return replyMessage(req.body, res,  monthMessage(hasEmployee), 'flex')
           }
@@ -111,9 +123,8 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
           
           if (isRegister) {
             const {empCode}  = isRegister
-            //console.log(empCode + ',' + monPay)
             const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
-            const hasEmployee = employees.values.filter(([empCodeMe]) => empCodeMe === empCode.toString())[3]
+            const hasEmployee = employees.values.filter(([,empCodeMe]) => empCodeMe === empCode.toString())[3]
             
             return replyMessage(req.body, res,  monthMessage(hasEmployee), 'flex')
           }
@@ -123,9 +134,8 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
           
           if (isRegister) {
             const {empCode}  = isRegister
-            //console.log(empCode + ',' + monPay)
             const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
-            const hasEmployee = employees.values.filter(([empCodeMe]) => empCodeMe === empCode.toString())[4]
+            const hasEmployee = employees.values.filter(([,empCodeMe]) => empCodeMe === empCode.toString())[4]
             
             return replyMessage(req.body, res,  monthMessage(hasEmployee), 'flex')
           }
@@ -135,12 +145,10 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
           
           if (isRegister) {
             const {empCode}  = isRegister
-            //console.log(empCode + ',' + monPay)
             const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
-            const hasEmployee = employees.values.filter(([empCodeMe]) => empCodeMe === empCode.toString())[5]
+            const hasEmployee = employees.values.filter(([,empCodeMe]) => empCodeMe === empCode.toString())[5]
             
             return replyMessage(req.body, res,  monthMessage(hasEmployee), 'flex')
-            //console.log(value1)
           }
           return linkRichMenu(req.body.events[0].source.userId, richMenuId1)
 
@@ -148,17 +156,14 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
           
           if (isRegister) {
             const {empCode}  = isRegister
-            //console.log(empCode + ',' + monPay)
             const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
-            const hasEmployee = employees.values.filter(([empCodeMe]) => empCodeMe === empCode.toString())[6]
+            const hasEmployee = employees.values.filter(([,empCodeMe]) => empCodeMe === empCode.toString())[6]
             
             return replyMessage(req.body, res,  monthMessage(hasEmployee), 'flex')
-            //console.log(value1)
           }
           return linkRichMenu(req.body.events[0].source.userId, richMenuId1)
           
           case `เดือน${monPay}`:
-            //var numbers = [1, 2, 3];
             const employees1 = await getGoogleSheetDataTest(googleSheetCredential.RANGE_SHEET3)
             const hasEmployee = employees1.values.filter(([empCodeMe]) => empCodeMe === "107333")
             const rowH = await getGoogleSheetDataTest(googleSheetCredential.RANGE_ROWH_SHEET3)

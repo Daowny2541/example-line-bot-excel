@@ -465,24 +465,14 @@ const msgDetailForRegister = {
     "contents": [
       {
         "type": "text",
-        "text": "ท่านกำลังลงทะเบียนระบบ Pay Slip",
+        "text": "ท่านกำลังลงทะเบียนระบบ Pay Slip โดยมีข้อกำหนดสำคัญควรทราบดังนี้",
         "color": "#FFFFFF",
         "style": "normal",
         "weight": "bold",
         "align": "center",
         "gravity": "center",
-        "size": "md"
-      },
-      {
-        "type": "text",
-        "text": "โดยมีข้อกำหนดสำคัญควรทราบดังนี้",
-        "color": "#FFFFFF",
-        "weight": "bold",
-        "style": "normal",
-        "gravity": "center",
-        "align": "center",
         "size": "md",
-        "offsetTop": "sm"
+        "wrap": true
       }
     ],
     "spacing": "sm",
@@ -495,48 +485,30 @@ const msgDetailForRegister = {
     "contents": [
       {
         "type": "text",
-        "text": "1. การลงทะเบียนของพนักงาน 1 คน",
+        "text": "1. การลงทะเบียนของพนักงาน 1 คนจะได้เพียง 1 ID",
         "size": "sm",
         "weight": "regular",
         "style": "normal",
-        "offsetTop": "sm"
+        "offsetTop": "sm",
+        "wrap": true
       },
       {
         "type": "text",
-        "text": "จะได้เพียง 1 ID",
-        "size": "sm",
-        "weight": "regular",
-        "style": "normal"
-      },
-      {
-        "type": "text",
-        "text": "2. ห้ามเอา ID ของผู้อื่น หรือที่ไม่แน่ใจมาใช้งาน",
+        "text": "2. ห้ามเอา ID ของผู้อื่น หรือที่ไม่แน่ใจมาใช้งานลงทะเบียนโดยเด็ดขาด",
         "size": "sm",
         "weight": "regular",
         "style": "normal",
-        "offsetTop": "sm"
+        "offsetTop": "sm",
+        "wrap": true
       },
       {
         "type": "text",
-        "text": "ลงทะเบียนโดยเด็ดขาด",
-        "size": "sm",
-        "weight": "regular",
-        "style": "normal"
-      },
-      {
-        "type": "text",
-        "text": "3. การแอบดูเงินเดือนของบุคคลอื่น",
+        "text": "3. การแอบดูเงินเดือนของบุคคลอื่นถือเป็นความผิดร้ายแรงของบริษัท",
         "size": "sm",
         "weight": "regular",
         "style": "normal",
-        "offsetTop": "sm"
-      },
-      {
-        "type": "text",
-        "text": "ถือเป็นความผิดร้ายแรงของบริษัท",
-        "size": "sm",
-        "weight": "regular",
-        "style": "normal"
+        "offsetTop": "sm",
+        "wrap": true
       },
       {
         "type": "separator",
@@ -562,21 +534,29 @@ const msgDetailForRegister = {
       },
       {
         "type": "text",
-        "text": "ให้พิมพ์คำว่า ลงทะเบียน:ตามด้วยรหัสพนักงาน",
+        "text": "1. ให้พิมพ์คำว่า รหัสบัตรประชาชน:ตามด้วยรหัสบัตรประชาชน ของตัวเอง เช่น รหัสบัตรประชาชน:1-1111-11111-11-1",
         "size": "sm",
         "weight": "regular",
         "style": "normal",
         "offsetStart": "lg",
-        "offsetTop": "sm"
+        "offsetTop": "sm",
+        "position": "relative",
+        "margin": "md",
+        "wrap": true,
+        "offsetEnd": "lg"
       },
       {
         "type": "text",
-        "text": "ของตัวเองโดยไม่มีเว้นวรรค เช่น  ลงทะเบียน:999999",
-        "offsetStart": "lg",
+        "text": "2. ให้พิมพ์คำว่า รหัสพนักงาน:ตามด้วยรหัสพนักงาน ของตัวเองโดยไม่มีเว้นวรรค เช่น รหัสพนักงาน:999999",
         "size": "sm",
         "weight": "regular",
         "style": "normal",
-        "offsetTop": "sm"
+        "offsetStart": "lg",
+        "offsetTop": "sm",
+        "position": "relative",
+        "margin": "md",
+        "wrap": true,
+        "offsetEnd": "lg"
       }
     ],
     "margin": "sm",
