@@ -32,27 +32,24 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
 
       if (needRegisterFromIdCard) {
         const idCard = checkIdCardRegister[1]
+          if (!isRegister) {
+            const employeesIdCard = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
+            const hasEmployeeIdCard = employeesIdCard.values.some(([employeeIdCard]) => employeeIdCard === idCard.toString())
+            console.log(idCard)
 
-        const hasBeenRegistered = await validateRegistered(lineUserID)
-          if (hasBeenRegistered) {
-            return replyMessage(req.body, res, 'ไม่สามารถลงทะเบียนซ้ำได้')
+              if (!hasEmployeeIdCard) {
+                return replyMessage(req.body, res, 'รหัสบัตรประชาชนไม่ตรงกับที่มีในระบบ')
+              }
+
+              registerUser(lineUserID, idCard)
+            return replyMessage(req.body, res, 'ลงทะเบียนด้วยรหัสพนักงาน พิมพ์ รหัสพนักงาน:1234')
           }
 
-        const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
-        const hasEmployeeIdCard = employees.values.some(([employeeIdCard]) => employeeIdCard === idCard.toString())
-
-          if (!hasEmployeeIdCard) {
-            return replyMessage(req.body, res, 'รหัสพนักงานไม่ตรงกับที่มีในระบบ')
-          }
-
-          registerUser(lineUserID, idCard)
-        return replyMessage(req.body, res, 'ลงทะเบียนด้วยรหัสพนักงาน พิมพ์ รหัสพนักงาน:1234')
+        return replyMessage(req.body, res, 'ไม่สามารถลงทะเบียนซ้ำได้')
       } else
       if (needToRegister) {
         const empCodeForRegister = checkRegister[1] 
-        
-        const hasBeenRegistered = await validateRegistered(lineUserID)
-          if (hasBeenRegistered) {
+          if (isRegister) {
             const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
               const hasEmployee = employees.values.some(([,employeeEmpCode]) => employeeEmpCode === empCodeForRegister.toString())
 
