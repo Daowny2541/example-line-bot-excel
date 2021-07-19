@@ -26,16 +26,7 @@ const reply = async (bodyResponse, message, type, altText = 'เงินเด�
         return response
       } catch (error) {
         console.log(error.message)
-        const response = await axios({
-          method: 'post',
-          url: `${LINE_MESSAGING_API}/reply`,
-          data: JSON.stringify({
-            replyToken: bodyResponse.events[0].replyToken,
-            messages : [{ type: `text`, text: "ไม่พบข้อมูลในช่วงเวลาดังกล่าว" }]
-          }),
-          headers: LINE_HEADER
-        })
-        return response
+        return null
       }
 }
 
