@@ -2,9 +2,9 @@ const functions = require('firebase-functions')
 
 const { googleSheetCredential, lineCredential} = require('./config')
 const { reply, linkRichMenu} = require('./helpers/line')
-const { salaryMessage, meIncomeOther, monthMessage, msgTest, msgDetailForRegister} = require('./helpers/line/messages')
+const { salaryMessage, meIncomeOther, monthMessage, msgTest, msgDetailForRegister, msgDetailForRegisterValidate} = require('./helpers/line/messages')
 const { getGoogleSheetDataSalary, getGoogleSheetDataTest} = require('./helpers/googleSheets')
-const { validateRegistered, registerUserUpdate, registerUser } = require('./helpers/firebase')
+const { validateRegistered, registerUserUpdate, registerUser, registerUserDelete } = require('./helpers/firebase')
 const { compute_alpha } = require('googleapis')
 const line = require('@line/bot-sdk')
 
@@ -35,14 +35,14 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
           if (!isRegister) {
             const employeesIdCard = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
             const hasEmployeeIdCard = employeesIdCard.values.some(([employeeIdCard]) => employeeIdCard === idCard.toString())
-            console.log(idCard)
+            
 
               if (!hasEmployeeIdCard) {
-                return replyMessage(req.body, res, 'รหัสบัตรประชาชนไม่ตรงกับที่มีในระบบ')
+                return replyMessage(req.body, res, 'รหัสบัตรประชาชนไม่ตรงกับที่มีในระบบ กรุณากรอกรหัสบัตรประชาชนของตนเองให้ถูกต้อง')
               }
 
               registerUser(lineUserID, idCard)
-            return replyMessage(req.body, res, 'ลงทะเบียนด้วยรหัสพนักงาน พิมพ์ รหัสพนักงาน:1234')
+            return replyMessage(req.body, res, 'ลงทะเบียนด้วยรหัสพนักงานโดยพิมพ์คำว่า รหัสพนักงาน:ตามด้วยรหัสพนักงาน 6 หลัก')
           }
 
         return replyMessage(req.body, res, 'ไม่สามารถลงทะเบียนซ้ำได้')
@@ -50,11 +50,14 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
       if (needToRegister) {
         const empCodeForRegister = checkRegister[1] 
           if (isRegister) {
+            const { idCard } = isRegister
+            console.log(idCard)
+
             const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
-              const hasEmployee = employees.values.some(([,employeeEmpCode]) => employeeEmpCode === empCodeForRegister.toString())
+              const hasEmployee = employees.values.some(([empIdCode,employeeEmpCode]) => empIdCode === idCard.toString() && employeeEmpCode === empCodeForRegister.toString())
 
               if (!hasEmployee) {
-                return replyMessage(req.body, res, 'รหัสพนักงานไม่ตรงกับที่มีในระบบ')
+                return replyMessage(req.body, res, 'รหัสพนักงานไม่ตรงกับที่มีในระบบ กรุณากรอกรหัสพนักงานของตนเองให้ถูกต้อง')
               }
 
             client.getProfile(lineUserID).then((profile) => {
@@ -68,7 +71,7 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
             return linkRichMenu(req.body.events[0].source.userId, richMenuId2)
           }
 
-          return replyMessage(req.body, res, 'ไม่สามารถลงทะเบียนซ้ำได้')
+          return replyMessage(req.body, res, 'การลงทะเบียนไม่สมบูรณ์ กรุณาตรวจสอบตามขั้นตอนวิธีการลงทะเบียนให้ถูกต้อง')
       } 
       else 
       {
@@ -77,10 +80,13 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
             if (!isRegister) {
               return replyMessage(req.body, res, msgDetailForRegister, 'flex')
             }
-          return linkRichMenu(req.body.events[0].source.userId, richMenuId2)
+            registerUserDelete(lineUserID)
+          return  replyMessage(req.body, res, msgDetailForRegisterValidate, 'flex')
+         // return linkRichMenu(req.body.events[0].source.userId, richMenuId2)
 
           case 'เช็คเงินเดือนล่าสุด':
             if (!isRegister) {
+              replyMessage(req.body, res, 'กรุณาลงทะเบียนก่อน')
               return linkRichMenu(req.body.events[0].source.userId, richMenuId1)
             }
             const { empCode } = isRegister

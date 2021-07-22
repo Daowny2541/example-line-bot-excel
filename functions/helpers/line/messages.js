@@ -572,6 +572,123 @@ const msgDetailForRegister = {
   }
 }
 
+const msgDetailForRegisterValidate = {
+  "type": "bubble",
+  "size": "giga",
+  "direction": "ltr",
+  "header": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "การลงทะเบียนไม่สมบูรณ์กรุณาลงทะเบียน Pay slip ใหม่ตามขั้นตอนวิธีการลงทะเบียนดังนี้",
+        "color": "#FFFFFF",
+        "style": "normal",
+        "weight": "bold",
+        "align": "center",
+        "gravity": "center",
+        "size": "md",
+        "wrap": true
+      }
+    ],
+    "spacing": "sm",
+    "margin": "sm",
+    "position": "relative"
+  },
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "1. การลงทะเบียนของพนักงาน 1 คนจะได้เพียง 1 ID",
+        "size": "sm",
+        "weight": "regular",
+        "style": "normal",
+        "offsetTop": "sm",
+        "wrap": true
+      },
+      {
+        "type": "text",
+        "text": "2. ห้ามเอา ID ของผู้อื่น หรือที่ไม่แน่ใจมาใช้งานลงทะเบียนโดยเด็ดขาด",
+        "size": "sm",
+        "weight": "regular",
+        "style": "normal",
+        "offsetTop": "sm",
+        "wrap": true
+      },
+      {
+        "type": "text",
+        "text": "3. การแอบดูเงินเดือนของบุคคลอื่นถือเป็นความผิดร้ายแรงของบริษัท",
+        "size": "sm",
+        "weight": "regular",
+        "style": "normal",
+        "offsetTop": "sm",
+        "wrap": true
+      },
+      {
+        "type": "separator",
+        "color": "#C4C4C4",
+        "margin": "lg"
+      }
+    ],
+    "spacing": "sm",
+    "margin": "sm",
+    "position": "relative"
+  },
+  "footer": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "วิธีการลงทะเบียน",
+        "size": "md",
+        "weight": "bold",
+        "style": "normal",
+        "offsetStart": "sm"
+      },
+      {
+        "type": "text",
+        "text": "1. ให้พิมพ์คำว่า รหัสบัตรประชาชน:ตามด้วยรหัสบัตรประชาชน ของตัวเอง เช่น รหัสบัตรประชาชน:1-1111-11111-11-1",
+        "size": "sm",
+        "weight": "regular",
+        "style": "normal",
+        "offsetStart": "lg",
+        "offsetTop": "sm",
+        "position": "relative",
+        "margin": "md",
+        "wrap": true,
+        "offsetEnd": "lg"
+      },
+      {
+        "type": "text",
+        "text": "2. ให้พิมพ์คำว่า รหัสพนักงาน:ตามด้วยรหัสพนักงาน ของตัวเองโดยไม่มีเว้นวรรค เช่น รหัสพนักงาน:999999",
+        "size": "sm",
+        "weight": "regular",
+        "style": "normal",
+        "offsetStart": "lg",
+        "offsetTop": "sm",
+        "position": "relative",
+        "margin": "md",
+        "wrap": true,
+        "offsetEnd": "lg"
+      }
+    ],
+    "margin": "sm",
+    "spacing": "sm",
+    "position": "relative"
+  },
+  "styles": {
+    "header": {
+      "backgroundColor": "#F53107",
+      "separator": true,
+      "separatorColor": "#C4C4C4"
+    }
+  }
+}
+
 const profileMessage = ([empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	orgNameEng,	isSpecialPeriod,	monThis,	monPay,	title,	firstName,	lastName,	idCard,	birthDate,	workStartDate,	allMonth,	namePay,	periodYear,	periodno,	payDate,	salary,	netIncome,	totalIncome,	totalDeduct,	social,	providentFund,	empPaytax,	otherIncome,	otherDeduct,	emplGrupCode,	branchNo,	providentFundEmployer,	tax401,	positionName,	bookNo,	bankName]) => {
   //empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	orgNameEng,	isSpecialPeriod,	monThis,	monPay,	title,	firstName,	lastName,	idCard,	birthDate,	workStartDate,	allMonth,	namePay,	periodYear,	periodno,	payDate,	salary,	netIncome,	totalIncome,	totalDeduct,	social,	providentFund,	empPaytax,	otherIncome,	otherDeduct,	emplGrupCode,	branchNo,	providentFundEmployer,	tax401,	positionName,	bookNo,	bankName		
   return {
@@ -1332,7 +1449,7 @@ const salaryOtherDebit = (data) => {
   return msg
 }
 
-  module.exports = { salaryMessage, meIncomeOther, monthMessage, msgTest, msgDetailForRegister}
+  module.exports = { salaryMessage, meIncomeOther, monthMessage, msgTest, msgDetailForRegister, msgDetailForRegisterValidate}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 

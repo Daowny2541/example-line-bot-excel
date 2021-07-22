@@ -18,6 +18,11 @@ ref.once('value')
   })
 }
 
+const registerUserDelete = async (lineUserID) => {
+  const ref = db.ref(`/users/${lineUserID}`)
+  ref.remove();
+}
+
 const registerUserUpdate = async (lineUserID,empCode,displayName) => {
     const ref = db.ref(`/users/${lineUserID}/`)
     const childUID = ref.child(`profile`)
@@ -33,4 +38,4 @@ ref.transaction(() => ({ idCard }))
   })
 }
 
-module.exports = { validateRegistered, registerUserUpdate, registerUser }
+module.exports = { validateRegistered, registerUserUpdate, registerUser, registerUserDelete }
