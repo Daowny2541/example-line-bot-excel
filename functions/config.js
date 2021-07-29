@@ -7,15 +7,8 @@ const lineCredential = {
   const googleSheetCredential = {
     SPREADSHEET_ID: '1h7YLzMGX8_RJFEn4nlN6bwkHGC7eGY8wp-l1DlnS5sA', 
     RANGE_SHEET1: 'salary2021!A2:AJ',
-    RANGE_SHEET3: `debit!A2:J`,
-    RANGE_ROWH_SHEET3: `debit!H:H`,
-    RANGE_ROWI_SHEET3: `debit!I:I`,
-    RANGE_ROWI_SHEET1: `salary2021!I2:AJ`
-  }
-
-  const googleSheet2Credential = {
-    SPREADSHEET_ID: '1h7YLzMGX8_RJFEn4nlN6bwkHGC7eGY8wp-l1DlnS5sA', 
-    RANGE: 'details_cumulative!A2:N'
+    RANGE_SHEET2: `SalaryDebit2021!A2:M`,
+    RANGE_SHEET3: `SalaryCredit2021!A2:M`
   }
 
   const firebaseCredential = {
@@ -25,6 +18,5 @@ const lineCredential = {
   module.exports = {
     lineCredential,
     googleSheetCredential,
-    googleSheet2Credential,
     firebaseCredential
   }

@@ -18,6 +18,12 @@ ref.once('value')
   })
 }
 
+const readMonth = async (lineUserID, monPay) => {
+  const ref = db.ref(`/users/${lineUserID}/`)
+  const childUID = ref.child(`profile`)
+  childUID.update({ monPay })
+}
+
 const registerUserDelete = async (lineUserID) => {
   const ref = db.ref(`/users/${lineUserID}`)
   ref.remove();
@@ -38,4 +44,4 @@ ref.transaction(() => ({ idCard }))
   })
 }
 
-module.exports = { validateRegistered, registerUserUpdate, registerUser, registerUserDelete }
+module.exports = { readMonth, validateRegistered, registerUserUpdate, registerUser, registerUserDelete }

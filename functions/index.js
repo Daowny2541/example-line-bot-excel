@@ -2,9 +2,9 @@ const functions = require('firebase-functions')
 
 const { googleSheetCredential, lineCredential} = require('./config')
 const { reply, linkRichMenu} = require('./helpers/line')
-const { salaryMessage, meIncomeOther, monthMessage, msgTest, msgDetailForRegister, msgDetailForRegisterValidate} = require('./helpers/line/messages')
-const { getGoogleSheetDataSalary, getGoogleSheetDataTest} = require('./helpers/googleSheets')
-const { validateRegistered, registerUserUpdate, registerUser, registerUserDelete } = require('./helpers/firebase')
+const { salaryMessage, meIncomeOther, meDeductOther, monthMessage, msgBtnMonth, msgDetailForRegister} = require('./helpers/line/messages')
+const { getGoogleSheetDataSalary} = require('./helpers/googleSheets')
+const { readMonth, validateRegistered, registerUserUpdate, registerUser, registerUserDelete } = require('./helpers/firebase')
 const { compute_alpha } = require('googleapis')
 const line = require('@line/bot-sdk')
 
@@ -24,8 +24,10 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
       const checkIdCardRegister = messageFromUser.split('รหัสบัตรประชาชน:')
       const needToRegister = checkRegister && checkRegister[1]
       const needRegisterFromIdCard = checkIdCardRegister && checkIdCardRegister[1]
-      const checkSalary = messageFromUser.split('เดือน')
-      const monPay = checkSalary[1]
+      const checkSalary = messageFromUser.split('เดือน ')
+      const monTest = checkSalary[1]
+      const checkSalaryAll = messageFromUser.split('กด ')
+      const monthAllPay = checkSalaryAll[1]
       const isRegister = await validateRegistered(lineUserID)
       const richMenuId1 = 'richmenu-b7aeee763491cb7e6f41d1cd87508ac2'
       const richMenuId2 = 'richmenu-2a8420170ee5e7d623089a9987f0fc97'
@@ -36,25 +38,22 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
             const employeesIdCard = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
             const hasEmployeeIdCard = employeesIdCard.values.some(([employeeIdCard]) => employeeIdCard === idCard.toString())
             
-
               if (!hasEmployeeIdCard) {
                 return replyMessage(req.body, res, 'รหัสบัตรประชาชนไม่ตรงกับที่มีในระบบ กรุณากรอกรหัสบัตรประชาชนของตนเองให้ถูกต้อง')
               }
 
               registerUser(lineUserID, idCard)
-            return replyMessage(req.body, res, 'ลงทะเบียนด้วยรหัสพนักงานโดยพิมพ์คำว่า รหัสพนักงาน:ตามด้วยรหัสพนักงาน 6 หลัก')
+            return replyMessage(req.body, res, 'พิมพ์รหัสพนักงาน ตามรูปแบบตัวอย่าง โดยไม่ต้องเว้นวรรค\nตัวอย่าง รหัสพนักงาน:999999')
           }
 
-        return replyMessage(req.body, res, 'ไม่สามารถลงทะเบียนซ้ำได้')
+        return replyMessage(req.body, res, 'ไม่สามารถลงทะเบียนซ้ำได้หรือการลงทะเบียนก่อนหน้าไม่สำเร็จ กรุณาลงทะเทียนใหม่อีกครั้ง')
       } else
       if (needToRegister) {
         const empCodeForRegister = checkRegister[1] 
           if (isRegister) {
             const { idCard } = isRegister
-            console.log(idCard)
-
             const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
-              const hasEmployee = employees.values.some(([empIdCode,employeeEmpCode]) => empIdCode === idCard.toString() && employeeEmpCode === empCodeForRegister.toString())
+            const hasEmployee = employees.values.some(([empIdCode,employeeEmpCode]) => empIdCode === idCard.toString() && employeeEmpCode === empCodeForRegister.toString())
 
               if (!hasEmployee) {
                 return replyMessage(req.body, res, 'รหัสพนักงานไม่ตรงกับที่มีในระบบ กรุณากรอกรหัสพนักงานของตนเองให้ถูกต้อง')
@@ -65,13 +64,14 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
             })
             .catch((err) => {
               // error handling
+              console.log(err.message)
             });
           
             replyMessage(req.body, res, 'ลงทะเบียนเรียบร้อย')
             return linkRichMenu(req.body.events[0].source.userId, richMenuId2)
           }
 
-          return replyMessage(req.body, res, 'การลงทะเบียนไม่สมบูรณ์ กรุณาตรวจสอบตามขั้นตอนวิธีการลงทะเบียนให้ถูกต้อง')
+          return replyMessage(req.body, res, 'กรุณาลงทะเบียนก่อน')
       } 
       else 
       {
@@ -81,8 +81,7 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
               return replyMessage(req.body, res, msgDetailForRegister, 'flex')
             }
             registerUserDelete(lineUserID)
-          return  replyMessage(req.body, res, msgDetailForRegisterValidate, 'flex')
-         // return linkRichMenu(req.body.events[0].source.userId, richMenuId2)
+            return replyMessage(req.body, res, msgDetailForRegister, 'flex')
 
           case 'เช็คเงินเดือนล่าสุด':
             if (!isRegister) {
@@ -90,118 +89,60 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
               return linkRichMenu(req.body.events[0].source.userId, richMenuId1)
             }
             const { empCode } = isRegister
+            console.log(empCode)
             const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
             const me = employees.values.filter(([,employeeIDCard]) => employeeIDCard === empCode.toString())[0]
+            const num = me[15]
+            readMonth(lineUserID, num)
             return replyMessage(req.body, res, salaryMessage(me), 'flex')
 
           case 'รายได้อื่น ๆ เพิ่มเติม':
-            return replyMessage(req.body, res, 'ขอโทษค่ะ! เนื่องจากบริการนี้อยู่ในช่วงการพัฒนา')
+            if (isRegister) {
+              const { empCode, monPay} = isRegister
+              const employeesDebit = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET2)
+              const hasEmployeeDebit = employeesDebit.values.filter(([,empCodeMe,,,,allMonth]) => empCodeMe === empCode.toString() && allMonth === monPay.toString())
+              if (hasEmployeeDebit.length > 0) {
+                console.log(hasEmployeeDebit.map((data) => data[10]+' '+data[12]+'บาท'))
+                return replyMessage(req.body, res,  meIncomeOther(hasEmployeeDebit.map((data) => data[10]+' '+data[12]+'บาท'+'\n')), 'flex')
+              }
+              return replyMessage(req.body, res, 'ไม่พบข้อมูลในช่วงเวลาดังกล่าว')
+            }
 
           case `รายการหักอื่น ๆ เพิ่มเติม`:
-            return replyMessage(req.body, res, 'ขอโทษค่ะ! เนื่องจากบริการนี้อยู่ในช่วงการพัฒนา')
+            if (isRegister) {
+              const { empCode, monPay} = isRegister
+              const employeesCredit = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET3)
+              const hasEmployeeCredit = employeesCredit.values.filter(([,empCodeMe,,,,allMonth]) => empCodeMe === empCode.toString() && allMonth === monPay.toString())
+              if (hasEmployeeCredit.length > 0) {
+                console.log(hasEmployeeCredit.map((data) => data[10]+' '+data[12]+'บาท'))
+                return replyMessage(req.body, res,  meDeductOther(hasEmployeeCredit.map((data) => data[10]+' '+data[12]+'บาท'+'\n')), 'flex')
+              }
+              return replyMessage(req.body, res, 'ไม่พบข้อมูลในช่วงเวลาดังกล่าว')
+            }
 
           case `เช็คเงินเดือนย้อนหลัง`:
             if (isRegister) {
-              return replyMessage(req.body, res, msgTest, 'flex')
-
+              return replyMessage(req.body, res, msgBtnMonth, 'flex')
             }
           return linkRichMenu(req.body.events[0].source.userId, richMenuId1)
 
-          case `พฤษภาคม`:
-            
+          case `กด ${monthAllPay}` :
             if (isRegister) {
               const {empCode}  = isRegister
               const employees1 = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
-              const hasEmployee1 = employees1.values.filter(([,empCodeMe]) => empCodeMe === empCode.toString())[1]
-              if (hasEmployee1 == undefined) {
+              const hasEmployee1 = employees1.values.filter(([,empCodeMe, ,	,	,	,	,	,	,	,	,	, ,	, ,	allMonth]) => empCodeMe === empCode.toString() && allMonth === monthAllPay.toString())
+  
+              if (row == undefined) {
+                for (i = 0; i < hasEmployee1.length; i++) {
+                  var row = hasEmployee1[i];
+                  var numMon = row[15]
+                  readMonth(lineUserID, numMon)
+                  return replyMessage(req.body, res, monthMessage(row), 'flex')
+                }
                 return replyMessage(req.body, res, 'ไม่พบข้อมูลในช่วงเวลาดังกล่าว')
               }
-              return replyMessage(req.body, res,  monthMessage(hasEmployee1), 'flex')
-            }
-
-          case `เมษายน`:
-          
-          if (isRegister) {
-            const {empCode}  = isRegister
-            const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
-            const hasEmployee = employees.values.filter(([,empCodeMe]) => empCodeMe === empCode.toString())[2]
-            if (hasEmployee == undefined) {
-              return replyMessage(req.body, res, 'ไม่พบข้อมูลในช่วงเวลาดังกล่าว')
-            }
-            return replyMessage(req.body, res,  monthMessage(hasEmployee), 'flex')
-          }
-
-          case `มีนาคม`:
-          
-          if (isRegister) {
-            const {empCode}  = isRegister
-            const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
-            const hasEmployee = employees.values.filter(([,empCodeMe]) => empCodeMe === empCode.toString())[3]
-            if (hasEmployee == undefined) {
-              return replyMessage(req.body, res, 'ไม่พบข้อมูลในช่วงเวลาดังกล่าว')
-            }
-            return replyMessage(req.body, res,  monthMessage(hasEmployee), 'flex')
-          }
-
-          case `กุมภาพันธ์`:
-          
-          if (isRegister) {
-            const {empCode}  = isRegister
-            const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
-            const hasEmployee = employees.values.filter(([,empCodeMe]) => empCodeMe === empCode.toString())[4]
-            
-            if (hasEmployee == undefined) {
-              return replyMessage(req.body, res, 'ไม่พบข้อมูลในช่วงเวลาดังกล่าว')
-            }
-            return replyMessage(req.body, res,  monthMessage(hasEmployee), 'flex')
-          }
-
-          case `มกราคม`:
-          
-          if (isRegister) {
-            const {empCode}  = isRegister
-            const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
-            const hasEmployee = employees.values.filter(([,empCodeMe]) => empCodeMe === empCode.toString())[5]
-            if (hasEmployee == undefined) {
-              return replyMessage(req.body, res, 'ไม่พบข้อมูลในช่วงเวลาดังกล่าว')
-            }
-            return replyMessage(req.body, res,  monthMessage(hasEmployee), 'flex')
-          }
-
-          case `ธันวาคม`:
-          
-          if (isRegister) {
-            const {empCode}  = isRegister
-            const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
-            const hasEmployee = employees.values.filter(([,empCodeMe]) => empCodeMe === empCode.toString())[6]
-
-            if (hasEmployee == undefined) {
-              return replyMessage(req.body, res, 'ไม่พบข้อมูลในช่วงเวลาดังกล่าว')
             }
             
-            return replyMessage(req.body, res,  monthMessage(hasEmployee), 'flex')
-          }
-          
-          case `เดือน${monPay}`:
-            const employees1 = await getGoogleSheetDataTest(googleSheetCredential.RANGE_SHEET3)
-            const hasEmployee = employees1.values.filter(([empCodeMe]) => empCodeMe === "107333")
-            const rowH = await getGoogleSheetDataTest(googleSheetCredential.RANGE_ROWH_SHEET3)
-            const rowI = await getGoogleSheetDataTest(googleSheetCredential.RANGE_ROWI_SHEET3)
-
-            //console.log(JSON.stringify(hasEmployee))
-            var data = {}
-            var userData = []
-            for (var _i = 0; _i < hasEmployee.length; _i++) {
-              var num = hasEmployee[_i]
-              var record = {}
-              record['monPay'] = num[4]
-            }
-            data.user = userData
-            //var result = JSON.stringify(data)
-            console.log(data)
-
-          return replyMessage(req.body, res, 'ไม่พบข้อมูล กรุณาลงทะเบียนก่อนใช้งาน')
-
         } 
         return replyMessage(req.body, res, 'ขอโทษครับ/ค่ะ  รายละเอียดที่ใส่ไม่ตรงตามที่กำหนดเงื่อนไข')
       }

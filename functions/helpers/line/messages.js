@@ -4,7 +4,7 @@ const { googleSheetCredential} = require('../../config')
 const numberToStringCurrency = (amount) => {
     return Intl.NumberFormat().format(amount)
 }
-const salaryMessage = ([empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	orgNameEng,	isSpecialPeriod,	monThis,	monPay,	title,	firstName,	lastName,	idCard,	birthDate,	workStartDate,	allMonth,	namePay,	periodYear,	periodno,	payDate,	salary,	netIncome,	totalIncome,	totalDeduct,	social,	providentFund,	empPaytax,	otherIncome,	otherDeduct,	emplGrupCode,	branchNo,	providentFundEmployer,	tax401,	positionName,	bookNo,	bankName]) => {
+const salaryMessage = ([idCard,	empCode,	emplGrupName,	orgUnitName,	orgCode,	orgName,	orgNameEng,	isSpecialPeriod,	monThis,	monPay,	title,	firstName,	lastName,	birthDate,	workStartDate,	allMonth,	namePay,	periodYear,	periodno,	payDate,	salary,	netIncome,	totalIncome,	totalDeduct,	social,	providentFund,	empPaytax,	otherIncome,	otherDeduct,	emplGrupCode,	branchNo,	providentFundEmployer,	tax401,	positionName,	bookNo,	bankName		]) => {
   //console.log(monPay)
   return {
       type: "bubble",
@@ -310,6 +310,70 @@ const salaryMessage = ([empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	or
                 type: "box",
                 contents: [
                   {
+                    text: "กองทุนสำรองเลี้ยงชีพ",
+                    style: "normal",
+                    gravity: "center",
+                    align: "start",
+                    margin: "lg",
+                    type: "text",
+                    wrap: true,
+                    color: "#000000",
+                    size: "xs",
+                    weight: "regular"
+                  },
+                  {
+                    type: "text",
+                    size: "xxs",
+                    color: "#000000",
+                    align: "end",
+                    text: `${numberToStringCurrency(providentFund)}`,
+                    wrap: true,
+                    style: "normal",
+                    margin: "md",
+                    gravity: "center",
+                    weight: "regular"
+                  }
+                ]
+              },
+              {
+                layout: "horizontal",
+                margin: "md",
+                spacing: "md",
+                type: "box",
+                contents: [
+                  {
+                    text: "จ่ายภาษี",
+                    style: "normal",
+                    gravity: "center",
+                    align: "start",
+                    margin: "lg",
+                    type: "text",
+                    wrap: true,
+                    color: "#000000",
+                    size: "xs",
+                    weight: "regular"
+                  },
+                  {
+                    type: "text",
+                    size: "xxs",
+                    color: "#000000",
+                    align: "end",
+                    text: `${numberToStringCurrency(empPaytax)}`,
+                    wrap: true,
+                    style: "normal",
+                    margin: "md",
+                    gravity: "center",
+                    weight: "regular"
+                  }
+                ]
+              },
+              {
+                layout: "horizontal",
+                margin: "md",
+                spacing: "md",
+                type: "box",
+                contents: [
+                  {
                     contents: [],
                     text: "รวมรายการหักอื่น ๆ",
                     style: "normal",
@@ -526,7 +590,7 @@ const msgDetailForRegister = {
     "contents": [
       {
         "type": "text",
-        "text": "วิธีการลงทะเบียน",
+        "text": "การลงทะเบียน",
         "size": "md",
         "weight": "bold",
         "style": "normal",
@@ -534,20 +598,7 @@ const msgDetailForRegister = {
       },
       {
         "type": "text",
-        "text": "1. ให้พิมพ์คำว่า รหัสบัตรประชาชน:ตามด้วยรหัสบัตรประชาชน ของตัวเอง เช่น รหัสบัตรประชาชน:1-1111-11111-11-1",
-        "size": "sm",
-        "weight": "regular",
-        "style": "normal",
-        "offsetStart": "lg",
-        "offsetTop": "sm",
-        "position": "relative",
-        "margin": "md",
-        "wrap": true,
-        "offsetEnd": "lg"
-      },
-      {
-        "type": "text",
-        "text": "2. ให้พิมพ์คำว่า รหัสพนักงาน:ตามด้วยรหัสพนักงาน ของตัวเองโดยไม่มีเว้นวรรค เช่น รหัสพนักงาน:999999",
+        "text": "พิมพ์รหัสบัตรประชาชน ตามรูปแบบตัวอย่าง โดยให้ใส่เครื่องหมายขีด (-) ด้วย \nตัวอย่าง รหัสบัตรประชาชน:1-1111-11111-11-1",
         "size": "sm",
         "weight": "regular",
         "style": "normal",
@@ -572,208 +623,7 @@ const msgDetailForRegister = {
   }
 }
 
-const msgDetailForRegisterValidate = {
-  "type": "bubble",
-  "size": "giga",
-  "direction": "ltr",
-  "header": {
-    "type": "box",
-    "layout": "vertical",
-    "contents": [
-      {
-        "type": "text",
-        "text": "การลงทะเบียนไม่สมบูรณ์กรุณาลงทะเบียน Pay slip ใหม่ตามขั้นตอนวิธีการลงทะเบียนดังนี้",
-        "color": "#FFFFFF",
-        "style": "normal",
-        "weight": "bold",
-        "align": "center",
-        "gravity": "center",
-        "size": "md",
-        "wrap": true
-      }
-    ],
-    "spacing": "sm",
-    "margin": "sm",
-    "position": "relative"
-  },
-  "body": {
-    "type": "box",
-    "layout": "vertical",
-    "contents": [
-      {
-        "type": "text",
-        "text": "1. การลงทะเบียนของพนักงาน 1 คนจะได้เพียง 1 ID",
-        "size": "sm",
-        "weight": "regular",
-        "style": "normal",
-        "offsetTop": "sm",
-        "wrap": true
-      },
-      {
-        "type": "text",
-        "text": "2. ห้ามเอา ID ของผู้อื่น หรือที่ไม่แน่ใจมาใช้งานลงทะเบียนโดยเด็ดขาด",
-        "size": "sm",
-        "weight": "regular",
-        "style": "normal",
-        "offsetTop": "sm",
-        "wrap": true
-      },
-      {
-        "type": "text",
-        "text": "3. การแอบดูเงินเดือนของบุคคลอื่นถือเป็นความผิดร้ายแรงของบริษัท",
-        "size": "sm",
-        "weight": "regular",
-        "style": "normal",
-        "offsetTop": "sm",
-        "wrap": true
-      },
-      {
-        "type": "separator",
-        "color": "#C4C4C4",
-        "margin": "lg"
-      }
-    ],
-    "spacing": "sm",
-    "margin": "sm",
-    "position": "relative"
-  },
-  "footer": {
-    "type": "box",
-    "layout": "vertical",
-    "contents": [
-      {
-        "type": "text",
-        "text": "วิธีการลงทะเบียน",
-        "size": "md",
-        "weight": "bold",
-        "style": "normal",
-        "offsetStart": "sm"
-      },
-      {
-        "type": "text",
-        "text": "1. ให้พิมพ์คำว่า รหัสบัตรประชาชน:ตามด้วยรหัสบัตรประชาชน ของตัวเอง เช่น รหัสบัตรประชาชน:1-1111-11111-11-1",
-        "size": "sm",
-        "weight": "regular",
-        "style": "normal",
-        "offsetStart": "lg",
-        "offsetTop": "sm",
-        "position": "relative",
-        "margin": "md",
-        "wrap": true,
-        "offsetEnd": "lg"
-      },
-      {
-        "type": "text",
-        "text": "2. ให้พิมพ์คำว่า รหัสพนักงาน:ตามด้วยรหัสพนักงาน ของตัวเองโดยไม่มีเว้นวรรค เช่น รหัสพนักงาน:999999",
-        "size": "sm",
-        "weight": "regular",
-        "style": "normal",
-        "offsetStart": "lg",
-        "offsetTop": "sm",
-        "position": "relative",
-        "margin": "md",
-        "wrap": true,
-        "offsetEnd": "lg"
-      }
-    ],
-    "margin": "sm",
-    "spacing": "sm",
-    "position": "relative"
-  },
-  "styles": {
-    "header": {
-      "backgroundColor": "#F53107",
-      "separator": true,
-      "separatorColor": "#C4C4C4"
-    }
-  }
-}
-
-const profileMessage = ([empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	orgNameEng,	isSpecialPeriod,	monThis,	monPay,	title,	firstName,	lastName,	idCard,	birthDate,	workStartDate,	allMonth,	namePay,	periodYear,	periodno,	payDate,	salary,	netIncome,	totalIncome,	totalDeduct,	social,	providentFund,	empPaytax,	otherIncome,	otherDeduct,	emplGrupCode,	branchNo,	providentFundEmployer,	tax401,	positionName,	bookNo,	bankName]) => {
-  //empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	orgNameEng,	isSpecialPeriod,	monThis,	monPay,	title,	firstName,	lastName,	idCard,	birthDate,	workStartDate,	allMonth,	namePay,	periodYear,	periodno,	payDate,	salary,	netIncome,	totalIncome,	totalDeduct,	social,	providentFund,	empPaytax,	otherIncome,	otherDeduct,	emplGrupCode,	branchNo,	providentFundEmployer,	tax401,	positionName,	bookNo,	bankName		
-  return {
-    type: 'bubble',
-    body: {
-      type: 'box',
-      layout: 'vertical',
-      contents: [
-        {
-          type: 'text',
-          text: 'IT system co.ltm',
-          color: '#1DB446',
-          size: 'md',
-          weight: 'bold'
-        },
-        {
-          type: 'text',
-          text: `${positionName}`,
-          weight: 'bold',
-          size: 'xxl',
-          margin: 'md'
-        },
-        {
-          type: 'text',
-          text: `คุณ${firstName} ${lastName}`,
-          size: 'sm',
-          color: '#555555',
-          wrap: true,
-          margin: 'sm'
-        },
-        {
-          type: 'text',
-          text: `วันที่จ้างงาน ${workStartDate}`,
-          size: 'sm',
-          color: '#555555',
-          wrap: true,
-          margin: 'sm'
-        },
-        {
-          type: 'text',
-          text: `รหัสพนักงาน ${empCode}`,
-          size: 'sm',
-          color: '#555555',
-          wrap: true,
-          margin: 'sm'
-        },
-        {
-          type: 'text',
-          text: `หมายเลขบัตรประชาชน ${idCard}`,
-          size: 'sm',
-          color: '#555555',
-          wrap: true,
-          margin: 'sm'
-        },
-        {
-          type: 'text',
-          text: `หมายเลขบัญชี ${bookNo}`,
-          size: 'sm',
-          color: '#555555',
-          wrap: true,
-          margin: 'sm'
-        },
-        {
-          type: 'text',
-          text: `ชื่อธนาคาร ${bankName}`,
-          size: 'sm',
-          color: '#555555',
-          wrap: true,
-          margin: 'sm'
-        },
-        {
-          type: 'separator',
-          margin: 'xxl'
-        },
-      ]
-    },
-    styles: {
-      footer: {
-        separator: true
-      }
-    }
-  }
-}
-
-const monthMessage = ([empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	orgNameEng,	isSpecialPeriod,	monThis,	monPay,	title,	firstName,	lastName,	idCard,	birthDate,	workStartDate,	allMonth,	namePay,	periodYear,	periodno,	payDate,	salary,	netIncome,	totalIncome,	totalDeduct,	social,	providentFund,	empPaytax,	otherIncome,	otherDeduct,	emplGrupCode,	branchNo,	providentFundEmployer,	tax401,	positionName,	bookNo,	bankName]) => {
+const monthMessage = ([idCard,	empCode,	emplGrupName,	orgUnitName,	orgCode,	orgName,	orgNameEng,	isSpecialPeriod,	monThis,	monPay,	title,	firstName,	lastName,	birthDate,	workStartDate,	allMonth,	namePay,	periodYear,	periodno,	payDate,	salary,	netIncome,	totalIncome,	totalDeduct,	social,	providentFund,	empPaytax,	otherIncome,	otherDeduct,	emplGrupCode,	branchNo,	providentFundEmployer,	tax401,	positionName,	bookNo,	bankName]) => {
   //console.log(monPay)
   return {
       type: "bubble",
@@ -1040,7 +890,6 @@ const monthMessage = ([empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	org
                 size: "sm",
                 gravity: "center",
                 wrap: true,
-                contents: [],
                 style: "normal",
                 align: "start",
                 type: "text",
@@ -1055,7 +904,6 @@ const monthMessage = ([empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	org
                 type: "box",
                 contents: [
                   {
-                    contents: [],
                     text: "ประกันสังคม",
                     style: "normal",
                     gravity: "center",
@@ -1071,7 +919,6 @@ const monthMessage = ([empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	org
                     type: "text",
                     size: "xxs",
                     color: "#000000",
-                    contents: [],
                     align: "end",
                     text: `${numberToStringCurrency(social)}`,
                     wrap: true,
@@ -1089,7 +936,70 @@ const monthMessage = ([empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	org
                 type: "box",
                 contents: [
                   {
-                    contents: [],
+                    text: "กองทุนสำรองเลี้ยงชีพ",
+                    style: "normal",
+                    gravity: "center",
+                    align: "start",
+                    margin: "lg",
+                    type: "text",
+                    wrap: true,
+                    color: "#000000",
+                    size: "xs",
+                    weight: "regular"
+                  },
+                  {
+                    type: "text",
+                    size: "xxs",
+                    color: "#000000",
+                    align: "end",
+                    text: `${numberToStringCurrency(providentFund)}`,
+                    wrap: true,
+                    style: "normal",
+                    margin: "md",
+                    gravity: "center",
+                    weight: "regular"
+                  }
+                ]
+              },
+              {
+                layout: "horizontal",
+                margin: "md",
+                spacing: "md",
+                type: "box",
+                contents: [
+                  {
+                    text: "จ่ายภาษี",
+                    style: "normal",
+                    gravity: "center",
+                    align: "start",
+                    margin: "lg",
+                    type: "text",
+                    wrap: true,
+                    color: "#000000",
+                    size: "xs",
+                    weight: "regular"
+                  },
+                  {
+                    type: "text",
+                    size: "xxs",
+                    color: "#000000",
+                    align: "end",
+                    text: `${numberToStringCurrency(empPaytax)}`,
+                    wrap: true,
+                    style: "normal",
+                    margin: "md",
+                    gravity: "center",
+                    weight: "regular"
+                  }
+                ]
+              },
+              {
+                layout: "horizontal",
+                margin: "md",
+                spacing: "md",
+                type: "box",
+                contents: [
+                  {
                     text: "รวมรายการหักอื่น ๆ",
                     style: "normal",
                     gravity: "center",
@@ -1105,7 +1015,6 @@ const monthMessage = ([empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	org
                     type: "text",
                     size: "xxs",
                     color: "#000000",
-                    contents: [],
                     align: "end",
                     text: `${numberToStringCurrency(otherDeduct)}`,
                     wrap: true,
@@ -1125,7 +1034,6 @@ const monthMessage = ([empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	org
                     align: "start",
                     type: "text",
                     gravity: "center",
-                    contents: [],
                     color: "#000000",
                     style: "normal",
                     weight: "bold",
@@ -1136,7 +1044,6 @@ const monthMessage = ([empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	org
                   {
                     size: "xxs",
                     gravity: "center",
-                    contents: [],
                     text: `${numberToStringCurrency(totalDeduct)}`,
                     align: "end",
                     color: "#000000",
@@ -1158,7 +1065,6 @@ const monthMessage = ([empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	org
                 style: "normal",
                 gravity: "center",
                 align: "start",
-                contents: [],
                 color: "#3B4ECC",
                 size: "xs",
                 text: "กดเพื่อดูรายการหักอื่น ๆ เพิ่มเติม",
@@ -1184,7 +1090,6 @@ const monthMessage = ([empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	org
                 size: "sm",
                 gravity: "center",
                 wrap: true,
-                contents: [],
                 style: "normal",
                 align: "start",
                 type: "text",
@@ -1201,7 +1106,6 @@ const monthMessage = ([empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	org
                     align: "start",
                     type: "text",
                     gravity: "center",
-                    contents: [],
                     color: "#000000",
                     style: "normal",
                     weight: "bold",
@@ -1212,7 +1116,6 @@ const monthMessage = ([empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	org
                   {
                     size: "xxs",
                     gravity: "center",
-                    contents: [],
                     text: `${numberToStringCurrency(netIncome)}`,
                     align: "end",
                     color: "#000000",
@@ -1234,12 +1137,27 @@ const monthMessage = ([empCode, emplGrupName,	orgUnitName,	orgCode,	orgName,	org
     }
 }
 
-const meIncomeOther = ([,	,	,	,	,	,	,	accountName,	,	debit		]) => {
+//idCard	empCode	namePrefix	firstName	lastName	allMonth	monPay	payDate	year	accountCode	accountName	isSpecialPeriod	credit		
+const meIncomeOther = (data) => {
     //empCode,	namePrefix,	firstName,	lastName,	monPay,	payDate,	accountCode,	accountName,	isSpecialPeriod,	debit	
-    console.log(accountName)
+
   return {
     type: "bubble",
-    body: {
+    size: "mega",
+    direction: "ltr",
+    styles: {
+      header: {
+        backgroundColor: "#1DB954",
+        separator: true,
+        separatorColor: "#C4C4C4"
+      },
+      body: {
+        separatorColor: "#C4C4C4",
+        separator: true,
+        backgroundColor: "#FAFAFAFF"
+      }
+    },
+    header: {
       type: "box",
       layout: "vertical",
       contents: [
@@ -1247,40 +1165,21 @@ const meIncomeOther = ([,	,	,	,	,	,	,	accountName,	,	debit		]) => {
           type: "text",
           text: "รายละเอียดรายได้อื่น ๆ",
           weight: "bold",
-          size: "xl",
-          margin: "md"
-        },
+          size: "md",
+          color: "#ffffff"
+        }
+      ]
+    },
+    body: {
+      type: "box",
+      layout: "vertical",
+      contents: [
         {
-          type: "separator",
-          margin: "xxl"
-        },
-        {
-          type: "box",
-          layout: "vertical",
-          margin: "xxl",
-          spacing: "sm",
-          contents: [
-            {
-              type: "box",
-              layout: "horizontal",
-              contents: [
-                {
-                  type: "text",
-                  text: `${accountName}`,
-                  size: "md",
-                  color: "#777777",
-                  wrap: true
-                },
-                {
-                  type: "text",
-                  text: `${numberToStringCurrency(debit)} บาท`,
-                  size: "md",
-                  color: "#777777",
-                  align: "end"
-                },
-              ]
-            }
-          ]
+          type: "text",
+          text: `${data}`,
+          size: "sm",
+          color: "#777777",
+          wrap: true
         }
       ]
     }
@@ -1288,7 +1187,56 @@ const meIncomeOther = ([,	,	,	,	,	,	,	accountName,	,	debit		]) => {
 
 }
 
-const msgTest = {
+const meDeductOther = (data) => {
+  //empCode,	namePrefix,	firstName,	lastName,	monPay,	payDate,	accountCode,	accountName,	isSpecialPeriod,	debit	
+
+return {
+  type: "bubble",
+  size: "mega",
+  direction: "ltr",
+  styles: {
+    header: {
+      backgroundColor: "#1DB954",
+      separator: true,
+      separatorColor: "#C4C4C4"
+    },
+    body: {
+      separatorColor: "#C4C4C4",
+      separator: true,
+      backgroundColor: "#FAFAFAFF"
+    }
+  },
+  header: {
+    type: "box",
+    layout: "vertical",
+    contents: [
+      {
+        type: "text",
+        text: "รายละเอียดรายการหักอื่น ๆ",
+        weight: "bold",
+        size: "md",
+        color: "#ffffff"
+      }
+    ]
+  },
+  body: {
+    type: "box",
+    layout: "vertical",
+    contents: [
+      {
+        type: "text",
+        text: `${data}`,
+        size: "sm",
+        color: "#777777",
+        wrap: true
+      }
+    ]
+  }
+}
+
+}
+
+const msgBtnMonth= {
   "type": "bubble",
   "size": "giga",
   "direction": "ltr",
@@ -1326,8 +1274,8 @@ const msgTest = {
             "type": "button",
             "action": {
               "type": "message",
-              "label": "ธ.ค.",
-              "text": "ธันวาคม"
+              "label": "ม.ค.",
+              "text": "กด มกราคม"
             },
             "style": "primary",
             "position": "relative"
@@ -1336,8 +1284,8 @@ const msgTest = {
             "type": "button",
             "action": {
               "type": "message",
-              "label": "ม.ค.",
-              "text": "มกราคม"
+              "label": "ก.พ.",
+              "text": "กด กุมภาพันธ์"
             },
             "position": "relative",
             "style": "primary"
@@ -1346,8 +1294,8 @@ const msgTest = {
             "type": "button",
             "action": {
               "type": "message",
-              "label": "ก.พ.",
-              "text": "กุมภาพันธ์"
+              "label": "มี.ค.",
+              "text": "กด มีนาคม"
             },
             "style": "primary",
             "position": "relative"
@@ -1363,18 +1311,8 @@ const msgTest = {
             "type": "button",
             "action": {
               "type": "message",
-              "label": "มี.ค.",
-              "text": "มีนาคม"
-            },
-            "style": "primary",
-            "position": "relative"
-          },
-          {
-            "type": "button",
-            "action": {
-              "type": "message",
               "label": "เม.ย.",
-              "text": "เมษายน"
+              "text": "กด เมษายน"
             },
             "style": "primary",
             "position": "relative"
@@ -1384,7 +1322,17 @@ const msgTest = {
             "action": {
               "type": "message",
               "label": "พ.ค.",
-              "text": "พฤษภาคม"
+              "text": "กด พฤษภาคม"
+            },
+            "style": "primary",
+            "position": "relative"
+          },
+          {
+            "type": "button",
+            "action": {
+              "type": "message",
+              "label": "มิ.ย.",
+              "text": "กด มิถุนายน"
             },
             "style": "primary",
             "position": "relative"
@@ -1401,129 +1349,5 @@ const msgTest = {
   }
 }
 
-const text = (['text', 'text', 'text', 'text'])
-const salaryOtherDebit = (data) => {
+  module.exports = { salaryMessage, meIncomeOther, meDeductOther, monthMessage, msgBtnMonth, msgDetailForRegister}
 
-  const msg = {
-    type: "bubble",
-    size: "giga",
-    header: {
-        type: "box",
-        layout: "horizontal",
-        contents: [
-            {
-                type: "image",
-                url: "https://bcrm-i.line-scdn.net/bcrm/uploads/1557539795/public_asset/file/1039/16041313597470536_logo.png",
-                align: "start",
-                size: "xxs",
-                flex: 0,
-                aspectRatio: "4:3"
-            },
-            {
-                type: "text",
-                text: data,
-                color: "#ffffff",
-                size: "xxs",
-                align: "end",
-                gravity: "center",
-                position: "relative",
-                weight: "regular"
-            }
-        ],
-        paddingAll: "10px"
-    },
-    body: {
-        type: "box",
-        layout: "vertical",
-        contents: [],
-        backgroundColor: "#191414",
-        spacing: "md"
-    },
-    styles: {
-        header: {
-            backgroundColor: "#1DB954"
-        }
-    }
-                  
-  }
-  return msg
-}
-
-  module.exports = { salaryMessage, meIncomeOther, monthMessage, msgTest, msgDetailForRegister, msgDetailForRegisterValidate}
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-
-/* return {
-  type: "bubble",
-  body: {
-    type: "box",
-    layout: "vertical",
-    contents: [
-      {
-        type: "text",
-        text: "รายละเอียดรายได้อื่น ๆ",
-        weight: "bold",
-        size: "xl",
-        margin: "md"
-      },
-      {
-        type: "separator",
-        margin: "xxl"
-      },
-      {
-        type: "box",
-        layout: "vertical",
-        margin: "xxl",
-        spacing: "sm",
-        contents: [
-          {
-            type: "box",
-            layout: "horizontal",
-            contents: [
-              {
-                type: "text",
-                text: `${accountName}`,
-                size: "md",
-                color: "#777777",
-                flex: 0
-              },
-              {
-                type: "text",
-                text: `${numberToStringCurrency(debit)} บาท`,
-                size: "md",
-                color: "#777777",
-                align: "end"
-              },
-            ]
-          }
-        ]
-      }
-    ]
-  }
-} */
-
-
-/* var data = {}
-var userData = []
-
- for (var _i = 0; _i < hasEmployee.length; _i++) {
-     var dataRow = hasEmployee[_i]
-     var record = {}
-     var super_array = [];
-     record['empCode'] = dataRow[0]
-     record['namePrefix'] = dataRow[1]
-     record['firstName'] = dataRow[2]
-     record['lastName'] = dataRow[3]
-     record['monPay'] = dataRow[4]
-     record['payDate'] = dataRow[5]
-     record['accountName'] = dataRow[7]
-     record['debit'] = dataRow[9]
-     userData.push(record)
-       // for (var j = 0; j < userData.push(record).length; j++) {
-       //   var subRecord = userData.push(record)
-       // }
-   }
-
-   data.user = userData
-   //var result = JSON.stringify(data)
-   console.log(data) */

@@ -28,27 +28,4 @@ const getGoogleSheetDataSalary = async (range) => {
   return data
 }
 
-const getGoogleSheetDataTest = async (range) => {
-  const jwtClient = new google.auth.JWT({
-    email: serviceAccount.client_email,
-    key: serviceAccount.private_key,
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'] // read and write sheets
-  })
-
-  const params = {
-      auth: jwtClient,
-      spreadsheetId: googleSheetCredential.SPREADSHEET_ID,
-      range: `${range}`
-  }
-  let data = []
-    try {
-      data = (await sheets.spreadsheets.values.get(params)).data
-      
-    } catch (err) {
-      console.error(err.message)
-    }
-
-  return data
-}
-
-module.exports = { getGoogleSheetDataSalary, getGoogleSheetDataTest}
+module.exports = { getGoogleSheetDataSalary}
