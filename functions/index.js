@@ -105,7 +105,7 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
                 console.log(hasEmployeeDebit.map((data) => data[10]+' '+data[12]+'บาท'))
                 return replyMessage(req.body, res,  meIncomeOther(hasEmployeeDebit.map((data) => data[10]+' '+data[12]+'บาท'+'\n')), 'flex')
               }
-              return replyMessage(req.body, res, 'ไม่พบข้อมูลในช่วงเวลาดังกล่าว')
+              return replyMessage(req.body, res, 'ไม่พบรายได้อื่น ๆ เพิ่มเติม')
             }
 
           case `รายการหักอื่น ๆ เพิ่มเติม`:
@@ -117,7 +117,7 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
                 console.log(hasEmployeeCredit.map((data) => data[10]+' '+data[12]+'บาท'))
                 return replyMessage(req.body, res,  meDeductOther(hasEmployeeCredit.map((data) => data[10]+' '+data[12]+'บาท'+'\n')), 'flex')
               }
-              return replyMessage(req.body, res, 'ไม่พบข้อมูลในช่วงเวลาดังกล่าว')
+              return replyMessage(req.body, res, 'ไม่พบรายการหักอื่น ๆ เพิ่มเติม')
             }
 
           case `เช็คเงินเดือนย้อนหลัง`:
