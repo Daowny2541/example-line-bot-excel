@@ -1,6 +1,3 @@
-const { getGoogleSheetDataSalary} = require('../googleSheets')
-const { googleSheetCredential} = require('../../config')
-
 const numberToStringCurrency = (amount) => {
     return Intl.NumberFormat().format(amount)
 }
@@ -1136,8 +1133,7 @@ const monthMessage = ([idCard,	empCode,	emplGrupName,	orgUnitName,	orgCode,	orgN
        }
     }
 }
-
-//idCard	empCode	namePrefix	firstName	lastName	allMonth	monPay	payDate	year	accountCode	accountName	isSpecialPeriod	credit		
+	
 const meIncomeOther = (data) => {
     //empCode,	namePrefix,	firstName,	lastName,	monPay,	payDate,	accountCode,	accountName,	isSpecialPeriod,	debit	
 
@@ -1188,7 +1184,6 @@ const meIncomeOther = (data) => {
 }
 
 const meDeductOther = (data) => {
-  //empCode,	namePrefix,	firstName,	lastName,	monPay,	payDate,	accountCode,	accountName,	isSpecialPeriod,	debit	
 
 return {
   type: "bubble",

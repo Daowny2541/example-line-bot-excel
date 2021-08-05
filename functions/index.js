@@ -87,7 +87,6 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
               return linkRichMenu(req.body.events[0].source.userId, richMenuId1)
             }
             const { empCode } = isRegister
-            console.log(empCode)
             const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
             const me = employees.values.filter(([,employeeIDCard]) => employeeIDCard === empCode.toString())[0]
             const num = me[15]
@@ -100,7 +99,6 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
               const employeesDebit = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET2)
               const hasEmployeeDebit = employeesDebit.values.filter(([,empCodeMe,,,,allMonth]) => empCodeMe === empCode.toString() && allMonth === monPay.toString())
               if (hasEmployeeDebit.length > 0) {
-                console.log(hasEmployeeDebit.map((data) => data[10]+' '+data[12]+' บาท'))
                 return replyMessage(req.body, res,  meIncomeOther(hasEmployeeDebit.map((data) => data[10]+' '+numberToStringCurrency(data[12])+' บาท'+'\n')), 'flex')
               }
               return replyMessage(req.body, res, 'ไม่พบรายได้อื่น ๆ เพิ่มเติม')
@@ -112,7 +110,6 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
               const employeesCredit = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET3)
               const hasEmployeeCredit = employeesCredit.values.filter(([,empCodeMe,,,,allMonth]) => empCodeMe === empCode.toString() && allMonth === monPay.toString())
               if (hasEmployeeCredit.length > 0) {
-                console.log(hasEmployeeCredit.map((data) => data[10]+' '+numberToStringCurrency(data[12])+' บาท'))
                 return replyMessage(req.body, res,  meDeductOther(hasEmployeeCredit.map((data) => data[10]+' '+numberToStringCurrency(data[12])+' บาท'+'\n')), 'flex')
               }
               return replyMessage(req.body, res, 'ไม่พบรายการหักอื่น ๆ เพิ่มเติม')
