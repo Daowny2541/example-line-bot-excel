@@ -24,8 +24,6 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
       const checkIdCardRegister = messageFromUser.split('รหัสบัตรประชาชน:')
       const needToRegister = checkRegister && checkRegister[1]
       const needRegisterFromIdCard = checkIdCardRegister && checkIdCardRegister[1]
-      const checkSalary = messageFromUser.split('เดือน ')
-      const monTest = checkSalary[1]
       const checkSalaryAll = messageFromUser.split('กด ')
       const monthAllPay = checkSalaryAll[1]
       const isRegister = await validateRegistered(lineUserID)
@@ -102,8 +100,8 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
               const employeesDebit = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET2)
               const hasEmployeeDebit = employeesDebit.values.filter(([,empCodeMe,,,,allMonth]) => empCodeMe === empCode.toString() && allMonth === monPay.toString())
               if (hasEmployeeDebit.length > 0) {
-                console.log(hasEmployeeDebit.map((data) => data[10]+' '+data[12]+'บาท'))
-                return replyMessage(req.body, res,  meIncomeOther(hasEmployeeDebit.map((data) => data[10]+' '+data[12]+'บาท'+'\n')), 'flex')
+                console.log(hasEmployeeDebit.map((data) => data[10]+' '+data[12]+' บาท'))
+                return replyMessage(req.body, res,  meIncomeOther(hasEmployeeDebit.map((data) => data[10]+' '+numberToStringCurrency(data[12])+' บาท'+'\n')), 'flex')
               }
               return replyMessage(req.body, res, 'ไม่พบรายได้อื่น ๆ เพิ่มเติม')
             }
@@ -114,8 +112,8 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
               const employeesCredit = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET3)
               const hasEmployeeCredit = employeesCredit.values.filter(([,empCodeMe,,,,allMonth]) => empCodeMe === empCode.toString() && allMonth === monPay.toString())
               if (hasEmployeeCredit.length > 0) {
-                console.log(hasEmployeeCredit.map((data) => data[10]+' '+data[12]+'บาท'))
-                return replyMessage(req.body, res,  meDeductOther(hasEmployeeCredit.map((data) => data[10]+' '+data[12]+'บาท'+'\n')), 'flex')
+                console.log(hasEmployeeCredit.map((data) => data[10]+' '+numberToStringCurrency(data[12])+' บาท'))
+                return replyMessage(req.body, res,  meDeductOther(hasEmployeeCredit.map((data) => data[10]+' '+numberToStringCurrency(data[12])+' บาท'+'\n')), 'flex')
               }
               return replyMessage(req.body, res, 'ไม่พบรายการหักอื่น ๆ เพิ่มเติม')
             }
@@ -133,7 +131,7 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
               const hasEmployee1 = employees1.values.filter(([,empCodeMe, ,	,	,	,	,	,	,	,	,	, ,	, ,	allMonth]) => empCodeMe === empCode.toString() && allMonth === monthAllPay.toString())
   
               if (row == undefined) {
-                for (i = 0; i < hasEmployee1.length; i++) {
+                for (let i = 0; i < hasEmployee1.length; i++) {
                   var row = hasEmployee1[i];
                   var numMon = row[15]
                   readMonth(lineUserID, numMon)
@@ -142,7 +140,7 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
                 return replyMessage(req.body, res, 'ไม่พบข้อมูลในช่วงเวลาดังกล่าว')
               }
             }
-            
+
         } 
         return replyMessage(req.body, res, 'ขอโทษครับ/ค่ะ  รายละเอียดที่ใส่ไม่ตรงตามที่กำหนดเงื่อนไข')
       }
@@ -150,13 +148,23 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
 
     res.status(200).send('ok')
   } catch (error) {
-    console.error(error.message)
-    res.status(400).send('error')
+    switch(res.statusCode) {
+      case 400 :
+        const ret400 = { message: `Text not found` };
+        return res.status(400).send(ret400);
+      case 500 :
+        const ret500 = { message: `Sending error: ${error}` };
+        return res.status(400).send(ret500);
+    }
   }
 })
 
 const replyMessage = (bodyRequest, res, message, type) => {
   reply(bodyRequest, message, type)
   return res.status(200).send('ok')
+}
+
+const numberToStringCurrency = (amount) => {
+  return Intl.NumberFormat().format(amount)
 }
 
