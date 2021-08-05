@@ -20,8 +20,8 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
 
     if (isTextMessage) {
       const messageFromUser = message.text.trim()
-      const checkRegister = messageFromUser.split('รหัสพนักงาน:')
-      const checkIdCardRegister = messageFromUser.split('รหัสบัตรประชาชน:')
+      const checkRegister = messageFromUser.split('ID2@')
+      const checkIdCardRegister = messageFromUser.split('ID1@')
       const needToRegister = checkRegister && checkRegister[1]
       const needRegisterFromIdCard = checkIdCardRegister && checkIdCardRegister[1]
       const checkSalaryAll = messageFromUser.split('กด ')
@@ -32,26 +32,27 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
 
       if (needRegisterFromIdCard) {
         const idCard = checkIdCardRegister[1]
+        console.log(normalize(idCard.toString()))
           if (!isRegister) {
             const employeesIdCard = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
-            const hasEmployeeIdCard = employeesIdCard.values.some(([employeeIdCard]) => employeeIdCard === idCard.toString())
+            const hasEmployeeIdCard = employeesIdCard.values.some(([employeeIdCard]) => employeeIdCard === normalize(idCard.toString()))
             
               if (!hasEmployeeIdCard) {
                 return replyMessage(req.body, res, 'รหัสบัตรประชาชนไม่ตรงกับที่มีในระบบ กรุณากรอกรหัสบัตรประชาชนของตนเองให้ถูกต้อง')
               }
 
               registerUser(lineUserID, idCard)
-            return replyMessage(req.body, res, 'พิมพ์รหัสพนักงาน ตามรูปแบบตัวอย่าง โดยไม่ต้องเว้นวรรค\nตัวอย่าง รหัสพนักงาน:999999')
+            return replyMessage(req.body, res, 'พิมพ์ ID2@รหัสพนักงาน โดยไม่ต้องเว้นวรรค\nตัวอย่าง ID2@999999')
           }
 
-        return replyMessage(req.body, res, 'ไม่สามารถลงทะเบียนซ้ำได้หรือการลงทะเบียนก่อนหน้าไม่สำเร็จ กรุณาลงทะเทียนใหม่อีกครั้ง')
+        return replyMessage(req.body, res, 'การลงทะเบียนก่อนหน้าไม่สำเร็จ กรุณากรอกข้อมูลให้ถูกต้อง')
       } else
       if (needToRegister) {
         const empCodeForRegister = checkRegister[1] 
           if (isRegister) {
             const { idCard } = isRegister
             const employees = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
-            const hasEmployee = employees.values.some(([empIdCode,employeeEmpCode]) => empIdCode === idCard.toString() && employeeEmpCode === empCodeForRegister.toString())
+            const hasEmployee = employees.values.some(([empIdCode,employeeEmpCode]) => empIdCode === normalize(idCard.toString()) && employeeEmpCode === empCodeForRegister.toString())
 
               if (!hasEmployee) {
                 return replyMessage(req.body, res, 'รหัสพนักงานไม่ตรงกับที่มีในระบบ กรุณากรอกรหัสพนักงานของตนเองให้ถูกต้อง')
@@ -78,8 +79,7 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
             if (!isRegister) {
               return replyMessage(req.body, res, msgDetailForRegister, 'flex')
             }
-            registerUserDelete(lineUserID)
-            return replyMessage(req.body, res, msgDetailForRegister, 'flex')
+            return replyMessage(req.body, res, 'ไม่สามารถลงทะเบียนซ้ำได้ เนื่องจากคุณได้ทำการลงทะเบียนไว้แล้ว')
 
           case 'เช็คเงินเดือนล่าสุด':
             if (!isRegister) {
@@ -163,5 +163,18 @@ const replyMessage = (bodyRequest, res, message, type) => {
 
 const numberToStringCurrency = (amount) => {
   return Intl.NumberFormat().format(amount)
+}
+
+const normalize = (idCard) => {
+ //normalize string and remove all unnecessary characters
+ idCard = idCard.replace(/[^\d]/g, "");
+
+ //check if number length equals to 10
+ if (idCard.length == 13) {
+     //reformat and return phone number
+     return idCard.replace(/(\d{1})(\d{4})(\d{5})(\d{2})(\d{1})/, '$1-$2-$3-$4-$5');
+ }
+
+ return null;
 }
 
