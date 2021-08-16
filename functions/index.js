@@ -70,16 +70,16 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
             replyMessage(req.body, res, 'ลงทะเบียนเรียบร้อย')
             return linkRichMenu(req.body.events[0].source.userId, richMenuId2)
           }
-
-          return replyMessage(req.body, res, 'กรุณาลงทะเบียนก่อน')
+          replyMessage(req.body, res, 'กรุณาลงทะเบียนก่อน')
+          return linkRichMenu(req.body.events[0].source.userId, richMenuId1)
       } 
       else 
       {
         switch (messageFromUser) {
           case 'ลงทะเบียน':
             if (!isRegister) {
-              linkRichMenu(req.body.events[0].source.userId, richMenuId1)
-              return replyMessage(req.body, res, msgDetailForRegister, 'flex')
+              replyMessage(req.body, res, msgDetailForRegister, 'flex') 
+              return linkRichMenu(req.body.events[0].source.userId, richMenuId1)
             }
             return replyMessage(req.body, res, 'ไม่สามารถลงทะเบียนซ้ำได้ เนื่องจากคุณได้ทำการลงทะเบียนไว้แล้ว')
 
@@ -141,7 +141,7 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
             }
 
         } 
-        return replyMessage(req.body, res, 'ขอโทษครับ/ค่ะ  รายละเอียดที่ใส่ไม่ตรงตามที่กำหนดเงื่อนไข')
+        return replyMessage(req.body, res, 'ขอโทษครับ/ค่ะ  รายละเอียดที่ใส่ไม่ตรงตามที่เงื่อนไขกำหนด')
       }
     }
 
