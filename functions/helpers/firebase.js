@@ -12,9 +12,18 @@ const db = admin.database()
 const validateRegistered = (lineUserID) => {
   return new Promise((resolve, reject) => {
     const ref = db.ref(`/users/${lineUserID}/profile`)
-ref.once('value')
-      .then(snapshot => resolve(snapshot.val()))
-      .catch(error => reject(error))
+      ref.once('value')
+            .then(snapshot => resolve(snapshot.val()))
+            .catch(error => reject(error))
+  })
+}
+
+const validateUser = (idCard) => {
+  return new Promise((resolve, reject) => {
+    const ref = db.ref(`/users/`).orderByChild("profile/idCard").equalTo(idCard)
+      ref.once('value')
+            .then(snapshot => resolve(snapshot.val()))
+            .catch(error => reject(error))
   })
 }
 
@@ -44,4 +53,4 @@ ref.transaction(() => ({ idCard }))
   })
 }
 
-module.exports = { readMonth, validateRegistered, registerUserUpdate, registerUser, registerUserDelete }
+module.exports = { readMonth, validateUser, validateRegistered, registerUserUpdate, registerUser, registerUserDelete }

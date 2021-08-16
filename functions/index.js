@@ -4,7 +4,7 @@ const { googleSheetCredential, lineCredential} = require('./config')
 const { reply, linkRichMenu} = require('./helpers/line')
 const { salaryMessage, meIncomeOther, meDeductOther, monthMessage, msgBtnMonth, msgDetailForRegister} = require('./helpers/line/messages')
 const { getGoogleSheetDataSalary} = require('./helpers/googleSheets')
-const { readMonth, validateRegistered, registerUserUpdate, registerUser, registerUserDelete } = require('./helpers/firebase')
+const { readMonth, validateUser, validateRegistered, registerUserUpdate, registerUser, registerUserDelete } = require('./helpers/firebase')
 const { compute_alpha } = require('googleapis')
 const line = require('@line/bot-sdk')
 
@@ -32,20 +32,21 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
 
       if (needRegisterFromIdCard) {
         const idCard = checkIdCardRegister[1]
-        console.log(normalize(idCard.toString()))
+        const isUser = await validateUser(idCard)
           if (!isRegister) {
-            const employeesIdCard = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
-            const hasEmployeeIdCard = employeesIdCard.values.some(([employeeIdCard]) => employeeIdCard === normalize(idCard.toString()))
-            
-              if (!hasEmployeeIdCard) {
-                return replyMessage(req.body, res, 'รหัสบัตรประชาชนไม่ตรงกับที่มีในระบบ กรุณากรอกรหัสบัตรประชาชนของตนเองให้ถูกต้อง')
-              }
-
-              registerUser(lineUserID, idCard)
-            return replyMessage(req.body, res, 'พิมพ์ ID2@รหัสพนักงาน โดยไม่ต้องเว้นวรรค\nตัวอย่าง ID2@999999')
+            if(!isUser) {
+              const employeesIdCard = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
+              const hasEmployeeIdCard = employeesIdCard.values.some(([employeeIdCard]) => employeeIdCard === normalize(idCard.toString()))
+              
+                if (!hasEmployeeIdCard) {
+                  return replyMessage(req.body, res, 'รหัสบัตรประชาชนไม่ตรงกับที่มีในระบบ กรุณากรอกรหัสบัตรประชาชนของตนเองให้ถูกต้อง')
+                }
+  
+                registerUser(lineUserID, idCard)
+              return replyMessage(req.body, res, 'พิมพ์ ID2@รหัสพนักงาน โดยไม่ต้องเว้นวรรค\nตัวอย่าง ID2@999999')
+            }
           }
-
-        return replyMessage(req.body, res, 'การลงทะเบียนก่อนหน้าไม่สำเร็จ กรุณากรอกข้อมูลให้ถูกต้อง')
+        return replyMessage(req.body, res, 'ลงทะเบียนซ้ำหรือรหัสบัตรประชาชนนี้เคยทำการสมัครมาแล้วโดยใช้เครื่องอื่น')
       } else
       if (needToRegister) {
         const empCodeForRegister = checkRegister[1] 
@@ -77,6 +78,7 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
         switch (messageFromUser) {
           case 'ลงทะเบียน':
             if (!isRegister) {
+              linkRichMenu(req.body.events[0].source.userId, richMenuId1)
               return replyMessage(req.body, res, msgDetailForRegister, 'flex')
             }
             return replyMessage(req.body, res, 'ไม่สามารถลงทะเบียนซ้ำได้ เนื่องจากคุณได้ทำการลงทะเบียนไว้แล้ว')
