@@ -43,7 +43,7 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
                 }
   
                 registerUser(lineUserID, idCard)
-              return replyMessage(req.body, res, 'พิมพ์ ID1(ตัวพิมพ์ใหญ่เท่านั้น)@รหัสพนักงาน โดยไม่ต้องเว้นวรรค\nตัวอย่าง ID2@999999') 
+              return replyMessage(req.body, res, 'พิมพ์ ID2(ตัวพิมพ์ใหญ่เท่านั้น)@รหัสพนักงาน โดยไม่ต้องเว้นวรรค\nตัวอย่าง ID2@999999') 
             }
           }
         return replyMessage(req.body, res, 'ลงทะเบียนซ้ำหรือรหัสบัตรประชาชนนี้เคยทำการสมัครมาแล้วโดยใช้เครื่องอื่น')
