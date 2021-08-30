@@ -31,9 +31,9 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
       const richMenuId2 = 'richmenu-2a8420170ee5e7d623089a9987f0fc97'
 
       if (needRegisterFromIdCard) {
-        const idCard = checkIdCardRegister[1]
-        const isUser = await validateUser(idCard)
           if (!isRegister) {
+            const idCard = checkIdCardRegister[1]
+            const isUser = await validateUser(idCard)
             if(!isUser) {
               const employeesIdCard = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET1)
               const hasEmployeeIdCard = employeesIdCard.values.some(([employeeIdCard]) => employeeIdCard === normalize(idCard.toString()))
@@ -45,8 +45,9 @@ exports.lineWebhook = functions.runWith({ memory: '2GB', timeoutSeconds: 360 }).
                 registerUser(lineUserID, idCard)
               return replyMessage(req.body, res, 'พิมพ์ ID2(ตัวพิมพ์ใหญ่เท่านั้น)@รหัสพนักงาน โดยไม่ต้องเว้นวรรค\nตัวอย่าง ID2@999999') 
             }
+            return replyMessage(req.body, res, 'ลงทะเบียนซ้ำหรือรหัสบัตรประชาชนนี้เคยทำการสมัครมาแล้วโดยใช้เครื่องอื่น')
           }
-        return replyMessage(req.body, res, 'ลงทะเบียนซ้ำหรือรหัสบัตรประชาชนนี้เคยทำการสมัครมาแล้วโดยใช้เครื่องอื่น')
+        return replyMessage(req.body, res, 'พิมพ์ ID2(ตัวพิมพ์ใหญ่เท่านั้น)@รหัสพนักงาน โดยไม่ต้องเว้นวรรค\nตัวอย่าง ID2@999999')
       } else
       if (needToRegister) {
         const empCodeForRegister = checkRegister[1] 
