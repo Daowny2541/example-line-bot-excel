@@ -102,6 +102,16 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
               }
               await replyMessage(event.replyToken, 'ไม่พบรายได้อื่น ๆ เพิ่มเติม')
             } 
+          } else if (messageFromUser === 'รายการหักอื่น ๆ เพิ่มเติม') {
+            if (isRegister) {
+              const { empCode, monPay} = isRegister
+              const employeesCredit = await getGoogleSheetDataSalary(googleSheetCredential.RANGE_SHEET3)
+              const hasEmployeeCredit = employeesCredit.values.filter(([,empCodeMe,,,,allMonth]) => empCodeMe === empCode.toString() && allMonth === monPay.toString())
+              if (hasEmployeeCredit.length > 0) {
+                await replyFlex(event.replyToken,  meIncomeOther(hasEmployeeDebit.map((data) => data[10]+' '+numberToStringCurrency(data[12])+' บาท'+'\n')))
+              }
+              await replyMessage(event.replyToken, 'ไม่พบรายการหักอื่น ๆ เพิ่มเติม')
+            } 
           } else if (messageFromUser === `เช็คเงินเดือนย้อนหลัง`) {
               if (!isRegister) {
                 await replyMessage(event.replyToken, 'กรุณาลงทะเบียนก่อน')
