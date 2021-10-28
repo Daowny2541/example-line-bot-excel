@@ -1269,8 +1269,8 @@ const msgBtnMonth= {
             "type": "button",
             "action": {
               "type": "message",
-              "label": "มี.ค.",
-              "text": "กด มีนาคม"
+              "label": "เม.ย.",
+              "text": "กด เมษายน"
             },
             "style": "primary",
             "position": "relative"
@@ -1279,8 +1279,8 @@ const msgBtnMonth= {
             "type": "button",
             "action": {
               "type": "message",
-              "label": "เม.ย.",
-              "text": "กด เมษายน"
+              "label": "พ.ค.",
+              "text": "กด พฤษภาคม"
             },
             "position": "relative",
             "style": "primary"
@@ -1289,8 +1289,8 @@ const msgBtnMonth= {
             "type": "button",
             "action": {
               "type": "message",
-              "label": "พ.ค.",
-              "text": "กด พฤษภาคม"
+              "label": "มิ.ย.",
+              "text": "กด มิถุนายน"
             },
             "style": "primary",
             "position": "relative"
@@ -1302,16 +1302,6 @@ const msgBtnMonth= {
         "layout": "horizontal",
         "spacing": "xs",
         "contents": [
-          {
-            "type": "button",
-            "action": {
-              "type": "message",
-              "label": "มิ.ย.",
-              "text": "กด มิถุนายน"
-            },
-            "style": "primary",
-            "position": "relative"
-          },
           {
             "type": "button",
             "action": {
@@ -1328,6 +1318,16 @@ const msgBtnMonth= {
               "type": "message",
               "label": "ส.ค.",
               "text": "กด สิงหาคม"
+            },
+            "style": "primary",
+            "position": "relative"
+          },
+          {
+            "type": "button",
+            "action": {
+              "type": "message",
+              "label": "ก.ย.",
+              "text": "กด กันยายน"
             },
             "style": "primary",
             "position": "relative"
