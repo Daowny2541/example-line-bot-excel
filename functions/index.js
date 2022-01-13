@@ -25,11 +25,13 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
         if (event.message.type === "text") {
           var messageFromUser = event.message.text.trim()
           var isRegister = await validateRegistered(event.source.userId)
-          const checkIdCardRegister = messageFromUser.split('ID1@')
+          await replyMessage(event.replyToken, 'ประกาศ! ปิดปรับปรุงระบบชั่วคราว วันพฤหัสบดีที่ 6 มกราคม 2565 ถึง วันเสาร์ที่ 15 มกราคม 2565\nท่านจะไม่สามารถใช้งานได้ในวันดังกล่าว จึงเรียนมาเพื่อทราบและขออภัยในความไม่สะดวก')
+
+          //const checkIdCardRegister = messageFromUser.split('ID1@')
           const needRegisterFromIdCard = checkIdCardRegister && checkIdCardRegister[1]
-          const checkRegister = messageFromUser.split('ID2@')
+          //const checkRegister = messageFromUser.split('ID2@')
           const needToRegister = checkRegister && checkRegister[1]
-          const checkSalaryAll = messageFromUser.split('กด ')
+          //const checkSalaryAll = messageFromUser.split('กด ')
           const monthAllPay = checkSalaryAll[1]
           if (needRegisterFromIdCard) {
               if (!isRegister) {
@@ -73,14 +75,19 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
                 return linkRichMenu(req.body.events[0].source.userId, richMenuId2)
               }
               await replyMessage(event.replyToken, 'กรุณาลงทะเบียนก่อน')
+              //await replyMessage(event.replyToken, 'ประกาศ! ปิดปรับปรุงระบบชั่วคราว วันพฤหัสบดีที่ 6 มกราคม 2565 ถึง วันเสาร์ที่ 15 มกราคม 2565\nท่านจะไม่สามารถใช้งานได้ในวันดังกล่าว จึงเรียนมาเพื่อทราบและขออภัยในความไม่สะดวก')
+
             return linkRichMenu(req.body.events[0].source.userId, richMenuId1)
           } else
           if (messageFromUser === 'ลงทะเบียน') {
             if (!isRegister) {
-              await replyFlex(event.replyToken, msgDetailForRegister) 
+              ///await replyFlex(event.replyToken, msgDetailForRegister) 
               return linkRichMenu(req.body.events[0].source.userId, richMenuId1)
-            }
-            await replyMessage(event.replyToken, 'ไม่สามารถลงทะเบียนซ้ำได้ เนื่องจากคุณได้ทำการลงทะเบียนไว้แล้ว')
+              await replyMessage(event.replyToken, 'ประกาศ! ปิดปรับปรุงระบบชั่วคราว วันพฤหัสบดีที่ 6 มกราคม 2565 ถึง วันเสาร์ที่ 15 มกราคม 2565\nท่านจะไม่สามารถใช้งานได้ในวันดังกล่าว จึงเรียนมาเพื่อทราบและขออภัยในความไม่สะดวก')
+            } ///ประกาศ! ปิดปรับปรุงระบบชั่วคราว วันพฤหัสบดีที่ 6 มกราคม 2565 ถึง วันเสาร์ที่ 15 มกราคม 2565 ท่านจะไม่สามารถใช้งานได้ในวันดังกล่าว จึงเรียนมาเพื่อทราบและขออภัยในความไม่สะดวก
+            //await replyMessage(event.replyToken, 'ไม่สามารถลงทะเบียนซ้ำได้ เนื่องจากคุณได้ทำการลงทะเบียนไว้แล้ว')
+            await replyMessage(event.replyToken, 'ประกาศ! ปิดปรับปรุงระบบชั่วคราว วันพฤหัสบดีที่ 6 มกราคม 2565 ถึง วันเสาร์ที่ 15 มกราคม 2565\nท่านจะไม่สามารถใช้งานได้ในวันดังกล่าว จึงเรียนมาเพื่อทราบและขออภัยในความไม่สะดวก')
+
           } else if (messageFromUser === 'เช็คเงินเดือนล่าสุด') {
             if (!isRegister) {
               await replyMessage(event.replyToken, 'กรุณาลงทะเบียนก่อน')
@@ -91,7 +98,9 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
             const me = salaryEmployees.values.filter(([,employeeIDCard]) => employeeIDCard === empCode.toString())[0]
             const num = me[15]
               readMonth(event.source.userId, num)
-            await replyFlex(event.replyToken, salaryMessage(me))
+            //await replyFlex(event.replyToken, salaryMessage(me))
+            await replyMessage(event.replyToken, 'ประกาศ! ปิดปรับปรุงระบบชั่วคราว วันพฤหัสบดีที่ 6 มกราคม 2565 ถึง วันเสาร์ที่ 15 มกราคม 2565\nท่านจะไม่สามารถใช้งานได้ในวันดังกล่าว จึงเรียนมาเพื่อทราบและขออภัยในความไม่สะดวก')
+
           } else if (messageFromUser === 'รายได้อื่น ๆ เพิ่มเติม') {
             if (isRegister) {
               const { empCode, monPay} = isRegister
@@ -117,7 +126,9 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
                 await replyMessage(event.replyToken, 'กรุณาลงทะเบียนก่อน')
                 return linkRichMenu(req.body.events[0].source.userId, richMenuId1)
               }
-              await replyFlex(event.replyToken, msgBtnMonth)
+              //await replyFlex(event.replyToken, msgBtnMonth)
+              await replyMessage(event.replyToken, 'ประกาศ! ปิดปรับปรุงระบบชั่วคราว วันพฤหัสบดีที่ 6 มกราคม 2565 ถึง วันเสาร์ที่ 15 มกราคม 2565\nท่านจะไม่สามารถใช้งานได้ในวันดังกล่าว จึงเรียนมาเพื่อทราบและขออภัยในความไม่สะดวก')
+
           } else if (messageFromUser === `กด ${monthAllPay}`) {
             if (isRegister) {
               const {empCode}  = isRegister
@@ -138,7 +149,8 @@ exports.lineWebhook = functions.https.onRequest(async (req, res) => {
             await replyMessage(event.replyToken, 'ขอโทษครับ/ค่ะ  รายละเอียดที่ใส่ไม่ตรงตามที่เงื่อนไขกำหนด')
           }
         } else {
-          await replyMessage(event.replyToken, 'ไม่ตรงตามที่เงื่อนไขกำหนด');
+          //await replyMessage(event.replyToken, 'ไม่ตรงตามที่เงื่อนไขกำหนด');
+          await replyMessage(event.replyToken, 'ประกาศ! ปิดปรับปรุงระบบชั่วคราว วันพฤหัสบดีที่ 6 มกราคม 2565 ถึง วันเสาร์ที่ 15 มกราคม 2565\nท่านจะไม่สามารถใช้งานได้ในวันดังกล่าว จึงเรียนมาเพื่อทราบและขออภัยในความไม่สะดวก')
         }
       }
     };
